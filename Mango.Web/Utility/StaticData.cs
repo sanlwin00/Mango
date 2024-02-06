@@ -2,6 +2,7 @@
 
 public class StaticData
 {
+    public static string CouponApiBaseUrl { get; set; } = string.Empty;
     public enum ApiType
     {
         GET,
