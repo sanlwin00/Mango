@@ -1,3 +1,5 @@
 {
-    "dotnet.defaultSolution": "Mango.sln"
+    "dotnet.defaultSolution": "Mango.sln",
+    "peacock.affectDebuggingStatusBar": false,
+    "peacock.affectTabActiveBorder": true
 }
