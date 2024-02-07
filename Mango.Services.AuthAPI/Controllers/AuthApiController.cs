@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Mango.Services.AuthAPI.Models.Dto;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mango.Services.AuthAPI.Controllers
@@ -7,16 +8,50 @@ namespace Mango.Services.AuthAPI.Controllers
     [ApiController]
     public class AuthApiController : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<IActionResult> Register()
+        private readonly IAuthService _authService;
+        protected ResponseDto _response;
+
+        public AuthApiController(IAuthService authService)
         {
-            return Ok();
+            _authService = authService;
+            _response = new();
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegistrationDto dto)
+        {
+            string error = await _authService.Register(dto);
+            if(error != "")
+            {
+                _response.IsSuccess = false;  
+                _response.Result = dto;    
+                _response.Message = error;          
+                return BadRequest(_response);                
+            }
+            else
+            {
+                _response.IsSuccess = true;   
+                _response.Result = await _authService.GetUser(dto.Email);
+                return Ok(_response);
+            }
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
         {
-            return Ok();
+            var loginResponseDto = await _authService.Login(dto);
+            if (loginResponseDto.User != null)
+            {
+                _response.IsSuccess = true;
+                _response.Result = loginResponseDto;
+                return Ok(_response);
+            }
+            else
+            {
+                _response.IsSuccess = false;             
+                _response.Message = "Username or password is incorrect.";                           
+                return BadRequest(_response);  
+            }
         }
     }
 }

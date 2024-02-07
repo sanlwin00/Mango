@@ -1,0 +1,28 @@
+@startuml
+skinparam folderBackgroundColor #DDDDDD
+skinparam folderBorderColor Black
+skinparam artifactBackgroundColor #FFFFCC
+skinparam artifactBorderColor Black
+
+folder "Mango.Services.AuthAPI" {
+    folder Controllers {
+        artifact "AuthApiController.cs"
+    }
+    folder Data {
+        artifact "AppDbContext.cs"
+    }
+    artifact "Mango.Services.AuthAPI.csproj"
+    folder Models {
+        artifact "ApplicationUser.cs"
+        folder Dto {
+            artifact "LoginRequestDto.cs"
+            artifact "LoginResponseDto.cs"
+            artifact "RegistrationDto.cs"
+            artifact "ResponseDto.cs"
+            artifact "UserDto.cs"
+        }
+        artifact "JwtOptions.cs"
+    }
+    artifact "Program.cs"
+}    
+@enduml
