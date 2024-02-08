@@ -1,5 +1,6 @@
 ﻿using Mango.Services.AuthAPI.Models;
 using Mango.Services.AuthAPI.Models.Dto;
+using Mango.Services.AuthAPI.Services.IService;
 using Mango.Services.CouponAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,34 @@ public class AuthService : IAuthService
     private readonly AppDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-
-    public AuthService(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+    private readonly IJwtTokenGenerator _tokenGenerator;
+    public AuthService(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IJwtTokenGenerator tokenGenerator)
     {
         _db = db;
         _userManager = userManager;
         _roleManager = roleManager;
+        _tokenGenerator = tokenGenerator;
+    }
+
+    public async Task<bool> AssignRole(string email, string roleName)
+    {
+        var user = await _db.ApplicationUsers.FirstOrDefaultAsync(x => x.UserName.ToLower() == email.ToLower());
+        if (user != null)
+        {
+            if(!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult()) 
+            { 
+                //create role if it doesn't exist
+                _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
+            }
+            await _userManager.AddToRoleAsync(user, roleName);
+            return true;
+        }
+        return false;
     }
 
     public async Task<UserDto?> GetUser(string userName)
     {
-        var user = await _db.ApplicationUsers.FirstAsync(x => x.UserName.ToLower() == userName.ToLower());
+        var user = await _db.ApplicationUsers.FirstOrDefaultAsync(x => x.UserName.ToLower() == userName.ToLower());
         if (user != null)
         {
             UserDto userDto = new(){
@@ -41,13 +59,14 @@ public class AuthService : IAuthService
         bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
         if (user != null && isValid == true)
         {
+            var token = _tokenGenerator.GenerateToken(user);
             UserDto userDto = new(){
                 Email = user.Email,
                 Id = user.Id,
                 Name = user.Name,
                 PhoneNumber = user.PhoneNumber
             };
-            return new LoginResponseDto(){ User = userDto, Token = ""};
+            return new LoginResponseDto(){ User = userDto, Token = token};
         }
         else
         {
