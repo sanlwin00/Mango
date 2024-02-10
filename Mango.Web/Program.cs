@@ -12,13 +12,16 @@ builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddHttpClient<ICouponService, CouponService>();
 
-StaticData.CouponApiBaseUrl = builder.Configuration["ServiceUrls:CouponAPI"];
+
 StaticData.AuthApiBaseUrl = builder.Configuration["ServiceUrls:AuthAPI"];
+StaticData.CouponApiBaseUrl = builder.Configuration["ServiceUrls:CouponAPI"];
+StaticData.ProductApiBaseUrl = builder.Configuration["ServiceUrls:ProductAPI"];
 
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie( option =>
     {
         option.ExpireTimeSpan = TimeSpan.FromHours(8);
