@@ -59,7 +59,8 @@ public class AuthService : IAuthService
         bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
         if (user != null && isValid == true)
         {
-            var token = _tokenGenerator.GenerateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = _tokenGenerator.GenerateToken(user, roles);
             UserDto userDto = new(){
                 Email = user.Email,
                 Id = user.Id,
