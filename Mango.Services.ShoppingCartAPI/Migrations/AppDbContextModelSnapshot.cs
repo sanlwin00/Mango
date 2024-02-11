@@ -29,7 +29,7 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartDetailId"));
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("CartHeaderId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -40,18 +40,18 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
 
                     b.HasKey("CartDetailId");
 
-                    b.HasIndex("CartId");
+                    b.HasIndex("CartHeaderId");
 
                     b.ToTable("CartDetails");
                 });
 
             modelBuilder.Entity("Mango.Services.ShoppingCartAPI.Models.CartHeader", b =>
                 {
-                    b.Property<int>("CartId")
+                    b.Property<int>("CartHeaderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartHeaderId"));
 
                     b.Property<string>("CouponCode")
                         .IsRequired()
@@ -61,16 +61,16 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CartId");
+                    b.HasKey("CartHeaderId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("CartHeaders");
                 });
 
             modelBuilder.Entity("Mango.Services.ShoppingCartAPI.Models.CartDetail", b =>
                 {
                     b.HasOne("Mango.Services.ShoppingCartAPI.Models.CartHeader", "CartHeader")
                         .WithMany()
-                        .HasForeignKey("CartId")
+                        .HasForeignKey("CartHeaderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
