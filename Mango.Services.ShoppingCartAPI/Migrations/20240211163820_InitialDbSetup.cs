@@ -11,17 +11,17 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Carts",
+                name: "CartHeaders",
                 columns: table => new
                 {
-                    CartId = table.Column<int>(type: "int", nullable: false)
+                    CartHeaderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CouponCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carts", x => x.CartId);
+                    table.PrimaryKey("PK_CartHeaders", x => x.CartHeaderId);
                 });
 
             migrationBuilder.CreateTable(
@@ -30,7 +30,7 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                 {
                     CartDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CartId = table.Column<int>(type: "int", nullable: false),
+                    CartHeaderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Qty = table.Column<int>(type: "int", nullable: false)
                 },
@@ -38,17 +38,17 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                 {
                     table.PrimaryKey("PK_CartDetails", x => x.CartDetailId);
                     table.ForeignKey(
-                        name: "FK_CartDetails_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "CartId",
+                        name: "FK_CartDetails_CartHeaders_CartHeaderId",
+                        column: x => x.CartHeaderId,
+                        principalTable: "CartHeaders",
+                        principalColumn: "CartHeaderId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartDetails_CartId",
+                name: "IX_CartDetails_CartHeaderId",
                 table: "CartDetails",
-                column: "CartId");
+                column: "CartHeaderId");
         }
 
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                 name: "CartDetails");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "CartHeaders");
         }
     }
 }

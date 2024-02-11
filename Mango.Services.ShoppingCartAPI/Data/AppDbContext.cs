@@ -8,7 +8,7 @@ namespace Mango.Services.ShoppingCartAPI.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         { 
         }
-        public DbSet<CartHeader> Carts { get; set; }
+        public DbSet<CartHeader> CartHeaders { get; set; }
         public DbSet<CartDetail> CartDetails { get; set; }
 
     }
