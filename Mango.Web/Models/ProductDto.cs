@@ -12,5 +12,7 @@ namespace Mango.Web.Models
         public string Description { get; set; } = string.Empty; 
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        [Range(0, 100)]
+        public int Qty { get; set; } = 1;
     }
 }
