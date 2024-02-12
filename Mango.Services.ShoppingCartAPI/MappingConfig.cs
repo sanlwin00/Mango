@@ -13,7 +13,7 @@ namespace Mango.Services.ShoppingCartAPI
                 config.CreateMap<CartHeaderDto, CartHeader>();
                 config.CreateMap<CartHeader,  CartHeaderDto>();
                 config.CreateMap<CartDetailDto, CartDetail>();
-                config.CreateMap<CartDetail, CartDetailDto>();
+                config.CreateMap<CartDetail, CartDetailDto>();                
             });
             return mappingConfig;
         }
