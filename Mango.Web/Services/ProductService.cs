@@ -5,7 +5,7 @@ namespace Mango.Web.Services
 {
     public class ProductService : IProductService
     {
-        IBaseService _baseService;
+        private readonly IBaseService _baseService;
         public ProductService(IBaseService baseService)
         {
             _baseService = baseService;
