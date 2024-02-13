@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mango.Services.CouponAPI.Controllers
 {
     [Route("api/coupon")]
-    [ApiController]
-    [Authorize]
+    [ApiController]    
     public class CouponApiController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -23,6 +22,7 @@ namespace Mango.Services.CouponAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize("ADMIN")]
         public ResponseDto Get()
         {
             try
