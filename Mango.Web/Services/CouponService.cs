@@ -5,7 +5,7 @@ namespace Mango.Web.Services
 {
     public class CouponService : ICouponService
     {
-        IBaseService _baseService;
+        private readonly IBaseService _baseService;
         public CouponService(IBaseService baseService) 
         { 
             _baseService = baseService;

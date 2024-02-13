@@ -45,7 +45,7 @@
                     </ul>
                     <ul class="nav justify-content-end">
                         @if (!User.Identity.IsAuthenticated)
-                        {
+                        {                            
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
@@ -54,9 +54,12 @@
                             </li>
                         }
                         else
-                        {
+                        {                           
                             <li class="nav-item">
                                 <a class="nav-link text-dark" href="#">Welcome, @User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Cart" asp-action="CartIndex">Cart</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Logout</a>
