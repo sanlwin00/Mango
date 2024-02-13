@@ -6,6 +6,7 @@ public class StaticData
     public static string AuthApiBaseUrl { get; set; } = string.Empty;
     public static string TokenCookieName { get; set; } = "JwtToken";
     public static string ProductApiBaseUrl { get; set; } = string.Empty;
+    public static string ShoppingCartApiBaseUrl { get; set; } = string.Empty;
 
     public enum Roles
     {
