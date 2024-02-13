@@ -1,6 +1,6 @@
 ﻿@model ProductDto
 
-<form method="post" asp-action="AddToCart">
+<form method="post" asp-action="AddToCart" asp-route-productId="@Model.ProductId">
     <div class=" pt-4">
         <div class="card container" style="border:1px solid #808080;">
             <div class="card-header row text-primary" style="border-radius: 0px;">
