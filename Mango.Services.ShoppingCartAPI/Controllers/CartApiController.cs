@@ -181,7 +181,27 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
                 var cartHeaderFromDb = await _db.CartHeaders.FirstOrDefaultAsync(x => x.UserId == cartDto.CartHeader.UserId);
                 if (cartHeaderFromDb != null)
                 {
-                    cartHeaderFromDb.CouponCode = cartDto.CartHeader.CouponCode;
+                    if (cartDto.CartHeader.CouponCode == null)
+                        cartHeaderFromDb.CouponCode = "";
+                    else
+                    {                         
+                        //check if the coupon is valid
+                        if (!string.IsNullOrEmpty(cartDto.CartHeader.CouponCode))
+                        {
+                            var response = await _couponService.GetCouponAsync(cartDto.CartHeader.CouponCode);
+                            if (response != null && response.IsSuccess)
+                            {
+                                cartHeaderFromDb.CouponCode = cartDto.CartHeader.CouponCode;
+                            }
+                            else
+                            {
+                                cartHeaderFromDb.CouponCode = "";
+                                _response.IsSuccess = false;
+                                _response.Message = "Invalid Coupon";
+                            }
+                        }
+                        
+                    }
                     _db.Update(cartHeaderFromDb);
                     await _db.SaveChangesAsync();
                 }

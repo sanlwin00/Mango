@@ -49,9 +49,9 @@ public class BaseService : IBaseService
         }
         try
         {
-            HttpResponseMessage response = await client.SendAsync(message);
+            HttpResponseMessage response = await client.SendAsync(message);            
             switch (response.StatusCode)
-            {
+            {                
                 case HttpStatusCode.NotFound:
                     return new() { IsSuccess = false, Message = "Not Found" };
                 case HttpStatusCode.Forbidden:
@@ -59,14 +59,17 @@ public class BaseService : IBaseService
                 case HttpStatusCode.Unauthorized:
                     return new() { IsSuccess = false, Message = "Unauthorized" };
                 case HttpStatusCode.InternalServerError:
-                    return new() { IsSuccess = false, Message = "InternalServerError" };
-                case HttpStatusCode.BadRequest:
+                    return new() { IsSuccess = false, Message = "Internal Server Error" };
                 case HttpStatusCode.OK:
                     var apiContent = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<ResponseDto>(apiContent);
-                default:
+                case HttpStatusCode.BadRequest:
+                    var content = await response.Content.ReadAsStringAsync();
+                    dynamic obj = JsonConvert.DeserializeObject(content);
+                    return new() { IsSuccess = false, Message = response.ReasonPhrase + " | " + obj.title };
+                default:                    
                     return new() { IsSuccess = false, Message = response.ReasonPhrase };
-
+                
             }
         }
         catch (Exception ex)

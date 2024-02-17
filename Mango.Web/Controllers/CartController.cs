@@ -30,6 +30,22 @@ namespace Mango.Web.Controllers
             return View(new CartDto());
         }
 
-
+        [Authorize]
+        [HttpPost("ApplyCoupon")]
+        public async Task<IActionResult> ApplyCoupon(CartDto cart)
+        {
+            var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
+            string tmp = JsonConvert.SerializeObject(cart);
+            ResponseDto ? response = await _cartService.SetCouponAsync(cart);
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Coupon applied!";
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return RedirectToAction("CartIndex");
+        }
     }
 }
