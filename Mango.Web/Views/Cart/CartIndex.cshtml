@@ -15,6 +15,7 @@
             <div class="card-body">
             @if(Model.CartHeader != null)
             {
+                <input type="hidden" asp-for="@Model.CartHeader.UserId"/>
                 <div class=" d-none d-lg-block">
                     <div class="row text-info">
                         <div class="col-lg-2">
@@ -41,14 +42,14 @@
                                 <img src="@item.Product.ImageUrl" class="rounded" width="100%" />
                             </div>
                             <div class="col-8 col-md-5">
-                                <h5>Name</h5>
-                                <div style="font-size:11px;">@item.Product.Name</div>
+                                <div style="font-size:11px;">@item.Product.CategoryName</div>
+                                <h5>@item.Product.Name</h5>                                
                             </div>
-                            <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
-                                <span style="font-size:17px;">@item.Product.Price </span>
+                            <div class="col-3 col-md-2 pt-md-4">
+                                <span>@item.Product.Price </span>
                             </div>
-                            <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
-                                <span style="font-size:17px;">@item.Qty</span>
+                            <div class="col-3 col-md-2 pt-md-4">
+                                <span>@item.Qty</span>
                             </div>
                             <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
                                 <a class="btn btn-sm btn-danger">
@@ -63,7 +64,7 @@
                     <div class="col-6">
                         <span>Coupon:</span>
                         <input asp-for="CartHeader.CouponCode" />
-                        <button type="submit" class="btn btn-sm btn-success"> Apply </button>
+                        <button asp-action="ApplyCoupon" class="btn btn-sm btn-success"> Apply </button>
                     </div>
                     <div class="col-6 text-end">
                         <span class="text-danger" style="font-size:21px;">  Order Total : @Model.CartHeader.CartTotal.ToString("$0.00") <br /></span>
@@ -80,10 +81,10 @@
             </div>
             <div class="card-footer row">
                 <div class="col-6 col-md-3 ">
-                    <button type="submit" class="btn btn-outline-danger form-control">Email Cart</button>
+                    <button class="btn btn-outline-danger form-control">Email Cart</button>
                 </div>
                 <div class="col-6 col-md-3 offset-md-6">
-                    <button disabled class="btn btn-success form-control">Checkout (Comming Soon!)</button>
+                    <button type="submit" class="btn btn-success form-control">Checkout (Comming Soon!)</button>
                 </div>
             </div>
         </div>
