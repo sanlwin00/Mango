@@ -58,12 +58,13 @@ public class HomeController : Controller
     }
     
     [Authorize]
-    public async Task<IActionResult> AddToCart(int productId)
+    [HttpPost("AddToCart")]
+    public async Task<IActionResult> AddToCart(ProductDto product)
     {
-         var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
+        var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
         CartHeaderDto cartHeader = new(){ UserId = userId };
         List<CartDetailDto> cartDetails = new();
-        cartDetails.Add(new CartDetailDto { ProductId = productId, Qty = 1});
+        cartDetails.Add(new CartDetailDto { ProductId = product.ProductId, Qty = product.Qty});
 
         CartDto cart = new(){ CartHeader = cartHeader, CartDetails = cartDetails};        
         string temp = JsonConvert.SerializeObject(cart);
@@ -77,7 +78,7 @@ public class HomeController : Controller
         {
             TempData["error"] = response?.Message;
         }
-        return RedirectToAction("ProductDetails", new { productId = productId.ToString() });
+        return RedirectToAction("ProductDetails", new { productId = product.ProductId });
     }
 
     public IActionResult Privacy()
