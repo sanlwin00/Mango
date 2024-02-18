@@ -39,7 +39,7 @@
                     {
                         <div class="row h-100">
                             <div class="col-4 col-md-2 text-center py-2">
-                                <img src="@item.Product.ImageUrl" class="rounded" width="100%" />
+                                <img src="@item.Product.ImageUrl?.ToString()" class="rounded" width="100%" />
                             </div>
                             <div class="col-8 col-md-5">
                                 <div style="font-size:11px;">@item.Product.CategoryName</div>
@@ -52,23 +52,44 @@
                                 <span>@item.Qty</span>
                             </div>
                             <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
-                                <a class="btn btn-sm btn-danger">
+                                <a asp-action="RemoveCart" asp-route-cartDetailId="@item.CartDetailId" class="btn btn-sm btn-danger">
                                     <i class="bi bi-trash-fill"></i>
                                 </a>
                             </div>
                         </div>
                     }
-                
-                <hr />
-                <div class="row">
-                    <div class="col-6">
-                        <span>Coupon:</span>
-                        <input asp-for="CartHeader.CouponCode" />
-                        <button asp-action="ApplyCoupon" class="btn btn-sm btn-success"> Apply </button>
-                    </div>
+
+                    <hr />
+                    <div class="row">
+                        <div class="col-6">
+                            @if (string.IsNullOrEmpty(Model.CartHeader.CouponCode))
+                            {
+                                <span>Coupon:</span>
+                                <input asp-for="CartHeader.CouponCode" />
+                                <button asp-action="ApplyCoupon" class="btn btn-sm btn-success"> Apply </button>
+                            }
+                            else
+                            {
+                                <span>Coupon:</span>
+                                <input asp-for="CartHeader.CouponCode" disabled/>
+                                <button asp-action="RemoveCoupon" class="btn btn-sm btn-success"> Remove </button>
+                            }
+                        </div>
                     <div class="col-6 text-end">
-                        <span class="text-danger" style="font-size:21px;">  Order Total : @Model.CartHeader.CartTotal.ToString("$0.00") <br /></span>
-                        <span class="text-success"> Order Discount :  @Model.CartHeader.Discount.ToString("$0.00")</span>
+                        @if(Model.CartHeader.Discount > 0)
+                        {
+                            var totalBeforeDiscount = Model.CartHeader.CartTotal + Model.CartHeader.Discount;
+                            
+                            <span class="text-muted">
+                                Total:
+                                <del>@totalBeforeDiscount.ToString("C")</del><br />
+                            </span>
+                            <span class="text-success">
+                                Order Discount: @Model.CartHeader.Discount.ToString("C")<br />
+                            </span>                            
+                        }
+                        <span class="text-danger h5">  Order Total : @Model.CartHeader.CartTotal.ToString("C") <br /></span>
+                        
                     </div>
                 </div>            
             }
