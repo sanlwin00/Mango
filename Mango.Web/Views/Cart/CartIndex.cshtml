@@ -15,6 +15,7 @@
             <div class="card-body">
             @if(Model.CartHeader != null)
             {
+                <input type="hidden" asp-for="@Model.CartHeader.CartHeaderId"/>
                 <input type="hidden" asp-for="@Model.CartHeader.UserId"/>
                 <div class=" d-none d-lg-block">
                     <div class="row text-info">
@@ -102,7 +103,7 @@
             </div>
             <div class="card-footer row">
                 <div class="col-6 col-md-3 ">
-                    <button class="btn btn-outline-danger form-control">Email Cart</button>
+                    <button asp-action="EmailCart" class="btn btn-outline-danger form-control">Email Cart</button>
                 </div>
                 <div class="col-6 col-md-3 offset-md-6">
                     <button type="submit" class="btn btn-success form-control">Checkout (Comming Soon!)</button>
