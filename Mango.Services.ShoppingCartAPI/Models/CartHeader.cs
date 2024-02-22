@@ -13,6 +13,8 @@ namespace Mango.Services.ShoppingCartAPI.Models
         public double Discount { get; set; }
         [NotMapped]
         public double CartTotal { get; set; }
+        [NotMapped]
+        public string? Email { get; set; }
 
     }
 }
