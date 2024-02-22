@@ -11,7 +11,7 @@ public class MessageBus : IMessageBus
     public async Task PublishMessage(object message, string queueName)
     {
         // by default, SBClient will connect using port 9354 AMQP tcp protocol. Use AmqpWebSocket to connect using 443
-        await using var client = new ServiceBusClient(_connectionString, new ServiceBusClientOptions() { TransportType = ServiceBusTransportType.AmqpWebSockets});
+        await using var client = new ServiceBusClient(_connectionString, new ServiceBusClientOptions() { TransportType = ServiceBusTransportType.AmqpWebSockets});        
 
         ServiceBusSender sender = client.CreateSender(queueName);
 

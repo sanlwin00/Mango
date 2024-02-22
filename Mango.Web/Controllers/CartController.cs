@@ -78,11 +78,21 @@ namespace Mango.Web.Controllers
         [Authorize]
         [HttpPost("EmailCart")]
         public async Task<IActionResult> EmailCart(CartDto cart)
-        {
-            ResponseDto ? response = await _cartService.EmailCart(cart);
+        {            
+            ResponseDto? response = await _cartService.GetCartByUserAsync(cart.CartHeader.UserId);
             if (response != null && response.IsSuccess)
             {
-                TempData["success"] = "Email queued.";
+                CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(response.Result));
+                cartDto.CartHeader.Email = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Email)?.FirstOrDefault().Value;
+                response = await _cartService.EmailCart(cartDto);
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "You will receive the email shortly.";
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
             }
             else
             {
