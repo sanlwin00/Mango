@@ -4,6 +4,7 @@ namespace Mango.Services.EmailAPI.Services
 {
     public interface IEmailService
     {
-        Task<bool> SendEmailAndLog(CartDto cartDto);
+        Task<bool> SendCartEmail(CartDto cartDto);
+        Task<bool> SendRegistrationEmail(RegistrationDto cartDto);
     }
 }
