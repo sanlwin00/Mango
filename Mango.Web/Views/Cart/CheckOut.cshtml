@@ -1,0 +1,109 @@
+﻿@using Mango.Web.Models.Dto
+@model CartDto
+
+<form method="post">
+    <div class="container">
+        <div class="card border mt-4 container">
+            <div class="card-header bg-primary text-white ml-0 row ">
+                <div class="col-6">
+                    <h3 class="text-white"><i class="bi bi-cart"></i> &nbsp; Order Summary</h3>
+                </div>
+                <div class="col-6 text-end">
+                    <a asp-action="CartIndex" asp-controller="Cart" class="btn btn-secondary mt-2 btn-sm">Back to Cart</a>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row pt-2">
+                            <div class="col-12 py-2">
+                                <input asp-for="CartHeader.FirstName" placeholder="First name..." class="form-control" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="CartHeader.LastName" placeholder="Last name..." class="form-control" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="CartHeader.Email" placeholder="Email..." class="form-control" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="CartHeader.Phone" class="form-control" placeholder="Phone number..." />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label class="text-muted"><small>Order will be ready in 30 minutes after placing order. If you place order when restaurant is closed it will be ready next day.</small></label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card mt-2">
+                            <div class="card-body">
+                                <div class=" d-none d-lg-block">
+                                    <div class="row fw-bold">
+                                        <div class="col-7">
+                                            Product Details
+                                        </div>                                        
+                                        <div class="col-2 text-center">
+                                            Count
+                                        </div>
+                                        <div class="col-3 text-end">
+                                            Price
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+                                @foreach (var item in Model.CartDetails)
+                                {
+                                    <div class="row h-100">
+                                        <div class="col-7">
+                                            <span>@item.Product.Name</span>
+                                        </div>                                       
+                                        <div class="col-2 text-center">
+                                            <span>@item.Product.Qty</span>
+                                        </div>
+                                        <div class="col-3 text-end">
+                                            <span>@item.Product.Price</span>
+
+                                        </div>
+                                    </div>
+                                }
+                                <hr />
+
+                                <div class="row">
+                                    <div class="col-12 pr-4">
+                                        @if (Model.CartHeader.Discount > 0)
+                                        {
+                                            var totalBeforeDiscount = Model.CartHeader.CartTotal + Model.CartHeader.Discount;
+
+                                            <span class="text-muted">
+                                                Total:
+                                                <del>@totalBeforeDiscount.ToString("C")</del><br />
+                                            </span>
+                                            <span class="text-success">
+                                                Order Discount: @Model.CartHeader.Discount.ToString("C")<br />
+                                            </span>
+                                        }
+                                        <span class="text-danger h5">  Order Total : @Model.CartHeader.CartTotal.ToString("C") </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+
+                                    <div class="col-12 ">
+                                        <button type="submit" class="btn btn-success form-control ">
+                                            <span>Place Order</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

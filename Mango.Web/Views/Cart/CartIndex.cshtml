@@ -17,20 +17,20 @@
             {
                 <input type="hidden" asp-for="@Model.CartHeader.CartHeaderId"/>
                 <input type="hidden" asp-for="@Model.CartHeader.UserId"/>
-                <div class=" d-none d-lg-block">
-                    <div class="row text-info">
-                        <div class="col-lg-2">
+                <div class=" d-none d-md-block">
+                    <div class="row fw-bold">
+                        <div class="col-md-2">
                         </div>
-                        <div class="col-lg-5">
+                        <div class="col-md-5">
                             Product Details
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             Price
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             Count
                         </div>
-                        <div class="col-lg-1">
+                        <div class="col-md-1">
                         </div>
                     </div>
                 </div>
@@ -43,8 +43,8 @@
                                 <img src="@item.Product.ImageUrl?.ToString()" class="rounded" width="100%" />
                             </div>
                             <div class="col-8 col-md-5">
-                                <div style="font-size:11px;">@item.Product.CategoryName</div>
-                                <h5>@item.Product.Name</h5>                                
+                                <div><small>@item.Product.CategoryName</small></div>
+                                <h6>@item.Product.Name</h6>                                
                             </div>
                             <div class="col-3 col-md-2 pt-md-4">
                                 <span>@item.Product.Price </span>
@@ -52,7 +52,7 @@
                             <div class="col-3 col-md-2 pt-md-4">
                                 <span>@item.Qty</span>
                             </div>
-                            <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                            <div class="col-2 col-md-1 p-0 pt-md-4 text-center">
                                 <a asp-action="RemoveCart" asp-route-cartDetailId="@item.CartDetailId" class="btn btn-sm btn-danger">
                                     <i class="bi bi-trash-fill"></i>
                                 </a>
@@ -106,7 +106,7 @@
                     <button asp-action="EmailCart" class="btn btn-outline-danger form-control">Email Cart</button>
                 </div>
                 <div class="col-6 col-md-3 offset-md-6">
-                    <button type="submit" class="btn btn-success form-control">Checkout (Comming Soon!)</button>
+                    <button asp-action="CheckOut" class="btn btn-success form-control">Checkout</button>
                 </div>
             </div>
         </div>

@@ -17,9 +17,23 @@ namespace Mango.Services.ShoppingCartAPI.Services
         {
             var client = _httpClientFactory.CreateClient("Coupon");
             var response = await client.GetAsync($"/api/coupon/GetByCode/{couponCode}");
-            var apiContent = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
-            return result;
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                var apiContent = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
+                if (result != null && result.IsSuccess == true)
+                {
+                    return result;
+                }
+                else
+                {
+                    return new ResponseDto { IsSuccess = false, Message = "Invalid coupon!" };
+                }
+            }
+            else
+            {
+                return new ResponseDto { IsSuccess = false, Message = response.ReasonPhrase };
+            }
         }
     }
 }
