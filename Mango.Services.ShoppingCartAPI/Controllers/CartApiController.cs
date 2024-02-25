@@ -210,7 +210,7 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
                             {
                                 cartHeaderFromDb.CouponCode = "";
                                 _response.IsSuccess = false;
-                                _response.Message = "Invalid Coupon";
+                                _response.Message = response.Message;
                             }
                         }
                     }

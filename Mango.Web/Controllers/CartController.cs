@@ -29,6 +29,23 @@ namespace Mango.Web.Controllers
 
             return View(new CartDto());
         }
+
+        [Authorize]
+        public async Task<IActionResult> CheckOut(CartDto cart)
+        {
+            var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
+            ResponseDto? response = await _cartService.GetCartByUserAsync(userId);
+            if (response != null && response.IsSuccess)
+            {
+                CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(response.Result));
+                cartDto.CartHeader.Email = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Email)?.FirstOrDefault().Value;
+                return View(cartDto);
+            }
+
+            return View(new CartDto());
+        }
+
+
         [Authorize]
         public async Task<IActionResult> RemoveCart(int cartDetailId)
         {
@@ -45,7 +62,6 @@ namespace Mango.Web.Controllers
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon(CartDto cart)
         {
-            string tmp = JsonConvert.SerializeObject(cart);
             ResponseDto ? response = await _cartService.SetCouponAsync(cart);
             if (response != null && response.IsSuccess)
             {
