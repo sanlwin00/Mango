@@ -18,6 +18,7 @@ StaticData.AuthApiBaseUrl = builder.Configuration["ServiceUrls:AuthAPI"];
 StaticData.CouponApiBaseUrl = builder.Configuration["ServiceUrls:CouponAPI"];
 StaticData.ProductApiBaseUrl = builder.Configuration["ServiceUrls:ProductAPI"];
 StaticData.ShoppingCartApiBaseUrl = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
+StaticData.OrderApiBaseUrl = builder.Configuration["ServiceUrls:OrderAPI"];
 
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie( option =>
     {
         option.ExpireTimeSpan = TimeSpan.FromHours(8);

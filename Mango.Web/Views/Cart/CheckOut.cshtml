@@ -18,16 +18,20 @@
                     <div class="col-md-5">
                         <div class="row pt-2">
                             <div class="col-12 py-2">
-                                <input asp-for="CartHeader.FirstName" placeholder="First name..." class="form-control" />
+                                <input required asp-for="CartHeader.FirstName" placeholder="First name..." class="form-control" />
+                                <span asp-validation-for="CartHeader.FirstName" class="text-danger" />
                             </div>
                             <div class="col-12 py-2">
                                 <input asp-for="CartHeader.LastName" placeholder="Last name..." class="form-control" />
+                                <span asp-validation-for="CartHeader.LastName" class="text-danger" />
                             </div>
                             <div class="col-12 py-2">
-                                <input asp-for="CartHeader.Email" placeholder="Email..." class="form-control" />
+                                <input required asp-for="CartHeader.Email" placeholder="Email..." class="form-control" />
+                                <span asp-validation-for="CartHeader.Email" class="text-danger" />
                             </div>
                             <div class="col-12 py-2">
-                                <input asp-for="CartHeader.Phone" class="form-control" placeholder="Phone number..." />
+                                <input required asp-for="CartHeader.Phone" class="form-control" placeholder="Phone number..." />
+                                <span asp-validation-for="CartHeader.Phone" class="text-danger" />
                             </div>
                             <div class="col-12 pt-2">
                                 <label class="text-muted"><small>Order will be ready in 30 minutes after placing order. If you place order when restaurant is closed it will be ready next day.</small></label>
@@ -93,7 +97,7 @@
                                 <div class="row">
 
                                     <div class="col-12 ">
-                                        <button type="submit" class="btn btn-success form-control ">
+                                        <button asp-action="PlaceOrder" class="btn btn-success form-control ">
                                             <span>Place Order</span>
                                         </button>
                                     </div>
@@ -107,3 +111,7 @@
     </div>
 </form>
 
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

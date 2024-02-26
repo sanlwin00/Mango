@@ -11,40 +11,59 @@ namespace Mango.Web.Controllers
     public class CartController : Controller
     {
         private readonly IShoppingCartService _cartService;
-        public CartController(IShoppingCartService cartService) 
+        private readonly IOrderService _orderService;
+        public CartController(IShoppingCartService cartService, IOrderService orderService) 
         {
             _cartService = cartService;
+            _orderService = orderService;
         }
 
         [Authorize]
         public async Task<IActionResult> CartIndex()
         {
-            var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
-            ResponseDto? response = await _cartService.GetCartByUserAsync(userId);
-            if (response != null && response.IsSuccess)
-            {
-                CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(response.Result));
-                return View(cartDto);
-            }
-
-            return View(new CartDto());
+            var cartDto = await GetCartForTheLoggedInUser();
+            return View(cartDto);
         }
 
         [Authorize]
         public async Task<IActionResult> CheckOut(CartDto cart)
         {
-            var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
-            ResponseDto? response = await _cartService.GetCartByUserAsync(userId);
-            if (response != null && response.IsSuccess)
-            {
-                CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(response.Result));
-                cartDto.CartHeader.Email = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Email)?.FirstOrDefault().Value;
-                return View(cartDto);
-            }
-
-            return View(new CartDto());
+            var cartDto = await GetCartForTheLoggedInUser();
+            return View(cartDto);
         }
 
+        [Authorize]
+        [Route("Cart/Confirmation/{orderId}")]
+        public async Task<IActionResult> Confirmation([FromRoute] int orderId)
+        {
+            return View(orderId);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PlaceOrder(CartDto cart)
+        {
+            var cartDto = await GetCartForTheLoggedInUser();
+            cartDto.CartHeader.FirstName = cart.CartHeader.FirstName;
+            cartDto.CartHeader.LastName = cart.CartHeader.LastName;
+            cartDto.CartHeader.Phone = cart.CartHeader.Phone;
+            cartDto.CartHeader.Email = cart.CartHeader.Email;
+            
+            ResponseDto? response = await _orderService.CreateOrder(cartDto);
+            if (response != null && response.IsSuccess)
+            {
+                OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));   
+                
+                //** get stripe session and redirect for payment
+
+                TempData["success"] = "Order placed successfully!";
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            return RedirectToAction("CartIndex");
+        }
 
         [Authorize]
         public async Task<IActionResult> RemoveCart(int cartDetailId)
@@ -115,6 +134,23 @@ namespace Mango.Web.Controllers
                 TempData["error"] = response?.Message;
             }
             return RedirectToAction("CartIndex");
+        }
+
+        private async Task<CartDto> GetCartForTheLoggedInUser()
+        {
+            var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
+            ResponseDto? response = await _cartService.GetCartByUserAsync(userId);
+            if (response != null && response.IsSuccess)
+            {
+                CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(response.Result));
+                cartDto.CartHeader.Email = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Email)?.FirstOrDefault().Value;
+                cartDto.CartHeader.FirstName = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Name)?.FirstOrDefault().Value;
+                return cartDto;
+            }
+            else
+            {
+                return new CartDto();
+            }
         }
     }
 }
