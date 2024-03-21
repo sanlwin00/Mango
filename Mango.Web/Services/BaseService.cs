@@ -49,7 +49,8 @@ public class BaseService : IBaseService
         }
         try
         {
-            HttpResponseMessage response = await client.SendAsync(message);            
+            HttpResponseMessage response = await client.SendAsync(message);
+            var responseBody = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {                
                 case HttpStatusCode.NotFound:
@@ -59,7 +60,7 @@ public class BaseService : IBaseService
                 case HttpStatusCode.Unauthorized:
                     return new() { IsSuccess = false, Message = "Unauthorized" };
                 case HttpStatusCode.InternalServerError:
-                    return new() { IsSuccess = false, Message = "Internal Server Error" };
+                    return new() { IsSuccess = false, Message = "Internal Server Error!\n" + responseBody?.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() };
                 case HttpStatusCode.OK:
                     var apiContent = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<ResponseDto>(apiContent);
@@ -67,7 +68,7 @@ public class BaseService : IBaseService
                     var content = await response.Content.ReadAsStringAsync();
                     dynamic obj = JsonConvert.DeserializeObject(content);
                     return new() { IsSuccess = false, Message = response.ReasonPhrase + " | " + obj.title };
-                default:                    
+                default:  
                     return new() { IsSuccess = false, Message = response.ReasonPhrase };
                 
             }

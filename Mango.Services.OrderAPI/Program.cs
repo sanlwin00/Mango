@@ -27,9 +27,13 @@ builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
 
 //* Add Http and dependency services
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IMessageBus, MessageBus>();
 builder.Services.AddHttpClient("Product"
     , x => x.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+builder.Services.AddHttpClient("Coupon"
+    , x => x.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]))
     .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 builder.Services.AddControllers();

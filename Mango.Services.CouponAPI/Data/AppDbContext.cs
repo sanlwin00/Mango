@@ -15,14 +15,14 @@ namespace Mango.Services.CouponAPI.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Coupon>().HasData(new Coupon
             {
-                CouponId = 2,
+                CouponId = Guid.NewGuid().ToString(),
                 CouponCode = "10OFF",
                 DiscountAmount = 10,
                 MinAmount = 100,
             });
             modelBuilder.Entity<Coupon>().HasData(new Coupon
             {
-                CouponId = 3,
+                CouponId = Guid.NewGuid().ToString(),
                 CouponCode = "20OFF",
                 DiscountAmount = 20,
                 MinAmount = 150,
