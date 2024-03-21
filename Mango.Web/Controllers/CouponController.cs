@@ -48,10 +48,15 @@ namespace Mango.Web.Controllers
                     TempData["error"] = response?.Message;
                 }
             }            
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                TempData["error"] = string.Join("<br/>", errors);
+            }
             return View(model);
         }
         
-        public async Task<IActionResult> CouponDelete(int couponId)
+        public async Task<IActionResult> CouponDelete(string couponId)
         {
             ResponseDto? response = await _couponService.DeleteCouponAsync(couponId);
             if (response != null && response.IsSuccess)

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Mango.Services.OrderAPI.Utility;
 using Stripe;
 using Stripe.Checkout;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Mango.Services.OrderAPI.Controllers
 {
@@ -22,13 +24,15 @@ namespace Mango.Services.OrderAPI.Controllers
         private ResponseDto _response;
         private IMapper _mapper;
         private IProductService _productService;
-        public OrderApiController(AppDbContext db, IMapper mapper, IConfiguration configuration, IProductService productService)
+        private ICouponService _couponService;
+        public OrderApiController(AppDbContext db, IMapper mapper, IConfiguration configuration, IProductService productService, ICouponService couponService)
         {
             _db = db;
             _response = new ResponseDto();
             _mapper = mapper;
             _configuration = configuration;
             _productService = productService;
+            _couponService = couponService;
         }
 
         [Authorize]
@@ -65,11 +69,29 @@ namespace Mango.Services.OrderAPI.Controllers
                 var options = new SessionCreateOptions
                 {
                     LineItems = new List<SessionLineItemOptions>(),
-                    Mode = "payment",
-                    SuccessUrl = stripeRequestDto.ApprovedUrl,
+                    Mode = "payment",                    
+                    SuccessUrl = stripeRequestDto.ApprovedUrl,                    
                     CancelUrl = stripeRequestDto.CancelUrl,
                     AutomaticTax = new SessionAutomaticTaxOptions { Enabled = true },
                 };
+
+                if (!stripeRequestDto.OrderHeader.CouponCode.IsNullOrEmpty())
+                {
+                    //get stripe coupon id and apply
+                    var response = await _couponService.GetCouponAsync(stripeRequestDto.OrderHeader.CouponCode);
+                    if (response != null && response.IsSuccess)
+                    {
+                        var couponId = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(response.Result)).CouponId;
+                        var discountObj = new List<SessionDiscountOptions>
+                        {
+                            new SessionDiscountOptions
+                            {
+                                 Coupon = couponId
+                            }
+                        };
+                        options.Discounts = discountObj;
+                    }
+                }
 
                 foreach (var item in stripeRequestDto.OrderHeader.OrderDetails)
                 {

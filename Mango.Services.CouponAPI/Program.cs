@@ -32,6 +32,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+// This is for Stripe API
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 app.UseHttpsRedirection();
 app.UseAuthentication();    //* use jwt auth

@@ -23,11 +23,8 @@ namespace Mango.Services.CouponAPI.Migrations
 
             modelBuilder.Entity("Mango.Services.CouponAPI.Models.Coupon", b =>
                 {
-                    b.Property<int>("CouponId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CouponCode")
                         .IsRequired()
@@ -46,14 +43,14 @@ namespace Mango.Services.CouponAPI.Migrations
                     b.HasData(
                         new
                         {
-                            CouponId = 2,
+                            CouponId = "99a7dfec-1aa6-4cc8-8791-29c283021163",
                             CouponCode = "10OFF",
                             DiscountAmount = 10.0,
                             MinAmount = 100
                         },
                         new
                         {
-                            CouponId = 3,
+                            CouponId = "b798c040-fcd1-4563-a97c-a028ee8921af",
                             CouponCode = "20OFF",
                             DiscountAmount = 20.0,
                             MinAmount = 150
