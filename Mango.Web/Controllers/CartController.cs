@@ -33,13 +33,6 @@ namespace Mango.Web.Controllers
         }
 
         [Authorize]
-        [Route("Cart/Confirmation/{orderId}")]
-        public async Task<IActionResult> Confirmation([FromRoute] int orderId)
-        {
-            return View(orderId);
-        }
-
-        [Authorize]
         public async Task<IActionResult> PlaceOrder(CartDto cart)
         {
             var cartDto = await GetCartForTheLoggedInUser();
@@ -51,11 +44,30 @@ namespace Mango.Web.Controllers
             ResponseDto? response = await _orderService.CreateOrder(cartDto);
             if (response != null && response.IsSuccess)
             {
-                OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));   
-                
-                //** get stripe session and redirect for payment
+                OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
 
-                TempData["success"] = "Order placed successfully!";
+                //** get stripe session and redirect for payment
+                var domain = Request.Scheme + "://" + Request.Host.Value + "/";
+
+                StripeRequestDto stripeRequest = new StripeRequestDto
+                {
+                    ApprovedUrl = domain + "Cart/Confirmation/" + orderHeaderDto.OrderHeaderId,
+                    CancelUrl = domain + "Cart/CheckOut",
+                    OrderHeader = orderHeaderDto
+                };
+                
+                var stripeResponse = await _orderService.CreateStripeSession(stripeRequest);
+                if (stripeResponse != null && stripeResponse.IsSuccess)
+                {
+                    StripeRequestDto stripeObject = JsonConvert.DeserializeObject<StripeRequestDto>(Convert.ToString(stripeResponse.Result));
+
+                    Response.Headers.Add("Location", stripeObject.SessionUrl);
+                    return new StatusCodeResult(StatusCodes.Status303SeeOther);
+                }
+                else
+                {
+                    TempData["error"] = stripeResponse?.Message;
+                }
             }
             else
             {
@@ -63,6 +75,13 @@ namespace Mango.Web.Controllers
             }
 
             return RedirectToAction("CartIndex");
+        }
+
+        [Authorize]
+        [Route("Cart/Confirmation/{orderId}")]
+        public async Task<IActionResult> Confirmation([FromRoute] int orderId)
+        {
+            return View(orderId);
         }
 
         [Authorize]
