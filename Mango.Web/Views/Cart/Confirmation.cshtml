@@ -1,10 +1,10 @@
-﻿@model int
+﻿@model (int OrderId, string Status)
 
 <div class="card">
     <div class="card-body text-center">
         <h1 class="text-bg-primary p-4">Congratulations! Your order has been placed.</h1>
         <p class="pt-5">We have received your order and it will be ready in approximately 30 minutes.</p>
-        <h4 class="text-warning pb-3">Order ID - @Model</h4>
+        <h4 class="text-warning pb-3">Order ID - @Model.OrderId<small> (Status : @Model.Status)</small></h4>
         <img class="pb-5" src="/img/thankyou.png" />
     </div>
 </div>

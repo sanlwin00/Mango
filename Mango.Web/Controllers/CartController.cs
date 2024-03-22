@@ -81,7 +81,16 @@ namespace Mango.Web.Controllers
         [Route("Cart/Confirmation/{orderId}")]
         public async Task<IActionResult> Confirmation([FromRoute] int orderId)
         {
-            return View(orderId);
+            (int OrderId, string Status) model = (orderId, "Pending");
+
+            ResponseDto? response = await _orderService.ValidateStripeSession(orderId) ;
+            if (response != null && response.IsSuccess)
+            {
+                OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
+                model.Status = orderHeaderDto.Status.ToUpper();                
+            }
+
+            return View(model);
         }
 
         [Authorize]

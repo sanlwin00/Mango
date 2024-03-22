@@ -45,7 +45,7 @@ namespace Mango.Services.OrderAPI.Controllers
                 header.OrderDate = DateTime.Now;
                 header.Status = StaticData.OrderStatus.Pending.ToString();
                 header.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDto>>(cartDto.CartDetails);
-                
+
                 OrderHeader orderCreated = _db.OrderHeaders.Add(_mapper.Map<OrderHeader>(header)).Entity;
                 await _db.SaveChangesAsync();
 
@@ -65,12 +65,12 @@ namespace Mango.Services.OrderAPI.Controllers
         public async Task<ResponseDto> CreateStripeSession([FromBody] StripeRequestDto stripeRequestDto)
         {
             try
-            {   
+            {
                 var options = new SessionCreateOptions
                 {
                     LineItems = new List<SessionLineItemOptions>(),
-                    Mode = "payment",                    
-                    SuccessUrl = stripeRequestDto.ApprovedUrl,                    
+                    Mode = "payment",
+                    SuccessUrl = stripeRequestDto.ApprovedUrl,
                     CancelUrl = stripeRequestDto.CancelUrl,
                     AutomaticTax = new SessionAutomaticTaxOptions { Enabled = true },
                 };
@@ -95,7 +95,8 @@ namespace Mango.Services.OrderAPI.Controllers
 
                 foreach (var item in stripeRequestDto.OrderHeader.OrderDetails)
                 {
-                    var stripeLineItem = new SessionLineItemOptions {
+                    var stripeLineItem = new SessionLineItemOptions
+                    {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
                             UnitAmount = (long?)(item.Price * 100),
@@ -112,13 +113,52 @@ namespace Mango.Services.OrderAPI.Controllers
                 var service = new SessionService();
                 Session session = service.Create(options);
 
-                stripeRequestDto.SessionUrl = session.Url;              
+                stripeRequestDto.SessionUrl = session.Url;
 
-                OrderHeader orderHeader  = _db.OrderHeaders.First(x => x.OrderHeaderId == stripeRequestDto.OrderHeader.OrderHeaderId);
+                OrderHeader orderHeader = _db.OrderHeaders.First(x => x.OrderHeaderId == stripeRequestDto.OrderHeader.OrderHeaderId);
                 orderHeader.StripeSessionId = session.Id;
                 await _db.SaveChangesAsync();
+
                 _response.Result = stripeRequestDto;
 
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        [Authorize]
+        [HttpPost("ValidateStripeSession")]
+        public async Task<ResponseDto> ValidateStripeSession([FromBody]int orderHeaderId)
+        {
+            try
+            {
+                OrderHeader orderHeader = _db.OrderHeaders.First(x => x.OrderHeaderId == orderHeaderId);
+
+                //get paymentInten from Stripe
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.StripeSessionId);
+
+                var paymentIntentService = new PaymentIntentService();
+                PaymentIntent paymentIntent = paymentIntentService.Get(session.PaymentIntentId);
+
+                if (paymentIntent != null && paymentIntent.Status == "succeeded")
+                {
+                    //payment successful
+                    orderHeader.Status = StaticData.OrderStatus.Approved.ToString();
+                    _db.Update(orderHeader);
+                    await _db.SaveChangesAsync();
+
+                    _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
+                }
+                else
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = paymentIntent.Status;
+                }
             }
             catch (Exception ex)
             {

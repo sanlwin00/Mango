@@ -21,4 +21,13 @@ public class StaticData
         PUT,
         DELETE
     }
+    public enum OrderStatus
+    {
+        Pending,
+        Approved,
+        ReadyForPickup,
+        Completed,
+        Refunded,
+        Cancelled
+    }
 }
