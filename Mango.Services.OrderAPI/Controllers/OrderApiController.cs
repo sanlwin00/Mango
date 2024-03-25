@@ -12,6 +12,7 @@ using Stripe;
 using Stripe.Checkout;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Mango.MessageBus;
 
 namespace Mango.Services.OrderAPI.Controllers
 {
@@ -25,7 +26,9 @@ namespace Mango.Services.OrderAPI.Controllers
         private IMapper _mapper;
         private IProductService _productService;
         private ICouponService _couponService;
-        public OrderApiController(AppDbContext db, IMapper mapper, IConfiguration configuration, IProductService productService, ICouponService couponService)
+        private readonly IMessageBus _messageBus;
+        
+        public OrderApiController(AppDbContext db, IMapper mapper, IConfiguration configuration, IProductService productService, ICouponService couponService, IMessageBus messageBus)
         {
             _db = db;
             _response = new ResponseDto();
@@ -33,6 +36,7 @@ namespace Mango.Services.OrderAPI.Controllers
             _configuration = configuration;
             _productService = productService;
             _couponService = couponService;
+            _messageBus = messageBus;
         }
 
         [Authorize]
@@ -151,6 +155,18 @@ namespace Mango.Services.OrderAPI.Controllers
                     orderHeader.Status = StaticData.OrderStatus.Approved.ToString();
                     _db.Update(orderHeader);
                     await _db.SaveChangesAsync();
+
+                    //log reward points in servicebus
+                    RewardDto rewardDto = new()
+                    {
+                        OrderId = orderHeaderId,
+                        RewardPoint = Convert.ToInt32(orderHeader.OrderTotal),
+                        RewardDate = orderHeader.OrderDate,
+                        UserId = orderHeader.UserId
+                    };
+
+                    string topicName = _configuration.GetValue<string>("MessageQueueNames:OrderCreatedTopic");
+                    await _messageBus.PublishMessage(rewardDto, topicName);
 
                     _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
                 }

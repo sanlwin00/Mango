@@ -6,5 +6,6 @@ namespace Mango.Services.EmailAPI.Services
     {
         Task<bool> SendCartEmail(CartDto cartDto);
         Task<bool> SendRegistrationEmail(RegistrationDto cartDto);
+        Task<bool> SendOrderConfirmation(RewardDto rewardDto);
     }
 }
