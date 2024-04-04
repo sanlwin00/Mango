@@ -63,6 +63,79 @@ namespace Mango.Services.OrderAPI.Controllers
             }
             return _response;
         }
+        [Authorize]
+        [HttpPost("UpdateOrderStatus/{orderId:int}")]
+        public async Task<ResponseDto> UpdateOrderStatus(int orderId, [FromBody] string newStatus)
+        {
+            try
+            {
+                OrderHeader orderHeader = _db.OrderHeaders.Single(x => x.OrderHeaderId == orderId);
+                if (newStatus == StaticData.OrderStatus.Cancelled.ToString() && orderHeader.PaymentIntentId != null)
+                {
+                    var options = new RefundCreateOptions
+                    {
+                        Reason = RefundReasons.RequestedByCustomer,
+                        PaymentIntent = orderHeader.PaymentIntentId,                        
+                    };
+
+                    var refundService = new RefundService();
+                    Refund refund = refundService.Create(options);
+                }
+                orderHeader.Status = newStatus;
+                _db.OrderHeaders.Update(orderHeader);
+                await _db.SaveChangesAsync();
+
+                _response.Result = orderHeader;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        [Authorize]
+        [HttpPost("GetOrders")]
+        public async Task<ResponseDto> GetOrder([FromBody]string? userId = "")
+        {
+            try
+            {
+                IEnumerable<OrderHeader> orders;
+                if(User.IsInRole(StaticData.Roles.ADMIN.ToString()))
+                {
+                    orders = _db.OrderHeaders.Include(x => x.OrderDetails).OrderByDescending(y => y.OrderHeaderId).ToList();
+                }
+                else
+                {
+                    orders = _db.OrderHeaders.Include(x => x.OrderDetails).Where(u => u.UserId == userId).OrderByDescending(y => y.OrderHeaderId).ToList();
+                }
+                _response.Result = _mapper.Map<IEnumerable<OrderHeaderDto>>(orders);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        [Authorize]
+        [HttpPost("GetOrder")]
+        public async Task<ResponseDto> GetOrder([FromBody]int id)
+        {
+            try
+            {
+                OrderHeader orderHeader = _db.OrderHeaders.Include(x => x.OrderDetails).First(y => y.OrderHeaderId == id);
+                _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
 
         [Authorize]
         [HttpPost("CreateStripeSession")]
@@ -153,6 +226,7 @@ namespace Mango.Services.OrderAPI.Controllers
                 {
                     //payment successful
                     orderHeader.Status = StaticData.OrderStatus.Approved.ToString();
+                    orderHeader.PaymentIntentId = paymentIntent.Id;
                     _db.Update(orderHeader);
                     await _db.SaveChangesAsync();
 

@@ -1,0 +1,90 @@
+﻿@using Mango.Web.Models.Dto
+@model IEnumerable<OrderHeaderDto>
+@section Styles{
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.1/css/responsive.dataTables.min.css" />
+}
+<div class="card shadow border-0 mt-4">
+	<div class="card-header bg-primary bg-gradient ml-0 py-3">
+		<div class="row d-flex justify-content-between">
+			<div class="col-md-6">
+				<h1 class="text-white">Order List</h1>
+			</div>
+			<div class="col-md-6">
+				<ul class="list-group list-group-horizontal-md pt-2 justify-content-end">
+					<a style="text-decoration:none" asp-controller="Order" asp-action="OrderIndex" asp-route-status="@StaticData.OrderStatus.Pending">
+						<li class="list-group-item">Pending</li>
+					</a>
+					<a style="text-decoration:none" asp-controller="Order" asp-action="OrderIndex" asp-route-status="@StaticData.OrderStatus.Approved">
+					<li class="list-group-item">Approved</li>
+					</a>
+					<a style="text-decoration:none" asp-controller="Order" asp-action="OrderIndex" asp-route-status="@StaticData.OrderStatus.ReadyForPickup">
+					<li class="list-group-item">Ready For Pickup</li>
+					</a>
+					<a style="text-decoration:none" asp-controller="Order" asp-action="OrderIndex" asp-route-status="@StaticData.OrderStatus.Cancelled">
+					<li class="list-group-item">Cancelled</li>
+					</a>
+					<a style="text-decoration:none" asp-controller="Order" asp-action="OrderIndex" asp-route-status="All">
+					<li class="list-group-item">All</li>
+					</a>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		
+		<table id="dtOrder" class="display responsive nowrap" width="100%">
+			<thead>
+				<tr>
+					<th>
+						ID
+					</th>
+					<th class="text-center">
+						Date
+					</th>
+					<th>
+						Email
+					</th>
+					<th>
+						Name
+					</th>
+					<th>
+						Phone
+					</th>
+					<th>
+						Status
+					</th>
+					<th>
+						Total
+					</th>
+					<th>
+						Actions
+					</th>
+				</tr>
+			</thead>		
+			
+		</table>
+	</div>
+</div>
+@section Scripts{
+	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/3.0.1/js/dataTables.responsive.min.js"></script>
+	<script src="~/js/order.js"></script>
+	<script>
+		//--- highlight the selected status filter ---//
+		$(document).ready(function () {
+			var currentStatus = '@Context.Request.Query["status"]';
+
+			$('ul.list-group a').each(function () {
+				// Extract the status from the href attribute
+				var href = $(this).attr('href');
+				var statusParam = new URLSearchParams(href.substring(href.indexOf('?'))).get('status');
+
+				if (statusParam === currentStatus) {
+					// Add the 'active-item' class to the <li> child
+					$(this).find('li').addClass('list-group-item-dark');
+				}
+			});
+		});
+	</script>
+}
