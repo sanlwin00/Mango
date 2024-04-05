@@ -50,6 +50,11 @@ namespace Mango.Web.Controllers
                     TempData["error"] = response?.Message;
                 }
             }
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                TempData["error"] = string.Join("<br/>", errors);
+            }
             return View(model);
         }
 
@@ -84,7 +89,12 @@ namespace Mango.Web.Controllers
 					TempData["error"] = response?.Message;
 				}
 			}
-			return View(model);
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                TempData["error"] = string.Join("<br/>", errors);
+            }
+            return View(model);
 		}
 
 		public async Task<IActionResult> ProductDelete(int productId)

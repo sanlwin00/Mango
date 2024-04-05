@@ -36,6 +36,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();    //* use jwt auth
 app.UseAuthorization();
+app.UseStaticFiles();       //* recognize wwwroot folder
 
 app.MapControllers();
 ApplyMigration();           //* apply changes to db

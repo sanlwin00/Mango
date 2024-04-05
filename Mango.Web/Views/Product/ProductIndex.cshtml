@@ -18,7 +18,10 @@
 		</div>
 		<table class="table">
 			<thead>
-				<tr>					
+				<tr>
+					<th style="width:15%">
+						...
+					</th>
 					<th>
 						Category Name
 					</th>
@@ -35,6 +38,9 @@
 				@foreach (var item in Model)
 				{
 					<tr>
+						<td>
+							<img src="@item.ImageUrl" alt="thumbnail" class="img-thumbnail w-100"/>
+						</td>
 						<td>
 							@item.CategoryName
 						</td>

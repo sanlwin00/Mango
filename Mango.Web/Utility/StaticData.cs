@@ -30,4 +30,10 @@ public class StaticData
         Refunded,
         Cancelled
     }
+
+    public enum ContentType
+    {
+        Json,
+        MultipartFormData
+    }
 }
