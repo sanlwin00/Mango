@@ -1,16 +1,61 @@
-﻿@if (TempData["error"] != null)
+﻿@if (TempData["error"] != null || TempData["success"] != null || TempData["info"] != null || TempData["warning"] != null)
 {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script type="text/javascript">
-        toastr.error('@TempData["error"]');
-    </script>
-}
-@if (TempData["success"] != null)
-{
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-    <script type="text/javascript">
-        toastr.success('@TempData["success"]');
+        toastr.options = {
+            "rtl": false,
+            "closeButton": true,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "4000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "allowHtml": true
+        };
+
+        @if (TempData["success"] != null)
+        {
+            <text>
+                var messages = "@Html.Raw(TempData["success"])".split('<br/>');
+                messages.forEach(function (message) {
+                toastr.success(message);
+            });
+            </text>
+        }
+        @if (TempData["error"] != null)
+        {
+            <text>
+                var messages = "@Html.Raw(TempData["error"])".split('<br/>');
+                messages.forEach(function (message) {
+                toastr.error(message);
+            });
+            </text>
+        }
+        @if (TempData["info"] != null)
+        {
+            <text>
+                var messages = "@Html.Raw(TempData["info"])".split('<br/>');
+                messages.forEach(function (message) {
+                toastr.info(message);
+            });
+            </text>
+        }
+        @if (TempData["warning"] != null)
+        {
+            <text>
+                var messages = "@Html.Raw(TempData["warning"])".split('<br/>');
+                messages.forEach(function (message) {
+                toastr.warning(message);
+            });
+            </text>
+        }
     </script>
 }
