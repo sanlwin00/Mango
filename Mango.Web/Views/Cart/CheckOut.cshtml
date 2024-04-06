@@ -47,11 +47,14 @@
                                         <div class="col-7">
                                             Product Details
                                         </div>                                        
-                                        <div class="col-2 text-center">
-                                            Count
+                                        <div class="col-1 text-center">
+                                            Qty
                                         </div>
-                                        <div class="col-3 text-end">
+                                        <div class="col-2 text-end">
                                             Price
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            Amount
                                         </div>
                                     </div>
                                 </div>
@@ -63,19 +66,21 @@
                                         <div class="col-7">
                                             <span>@item.Product.Name</span>
                                         </div>                                       
-                                        <div class="col-2 text-center">
-                                            <span>@item.Product.Qty</span>
+                                        <div class="col-1 text-center">
+                                            <span>@item.Qty</span>
                                         </div>
-                                        <div class="col-3 text-end">
-                                            <span>@item.Product.Price</span>
-
+                                        <div class="col-2 text-end">
+                                            <span>@item.Product.Price.ToString("C")</span>
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            <span>@((item.Qty * item.Product.Price).ToString("C"))</span>
                                         </div>
                                     </div>
                                 }
                                 <hr />
 
                                 <div class="row">
-                                    <div class="col-12 pr-4">
+                                    <div class="col-12 pr-4 text-end">
                                         @if (Model.CartHeader.Discount > 0)
                                         {
                                             var totalBeforeDiscount = Model.CartHeader.CartTotal + Model.CartHeader.Discount;

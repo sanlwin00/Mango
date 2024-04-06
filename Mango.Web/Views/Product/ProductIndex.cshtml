@@ -20,7 +20,7 @@
 			<thead>
 				<tr>
 					<th style="width:15%">
-						...
+						Image
 					</th>
 					<th>
 						Category Name
@@ -39,7 +39,9 @@
 				{
 					<tr>
 						<td>
-							<img src="@item.ImageUrl" alt="thumbnail" class="img-thumbnail w-100"/>
+							<div class="img-square-responsive">
+								<img src="@item.ImageUrl" alt="thumbnail" class="img-thumbnail w-100" />
+							</div>
 						</td>
 						<td>
 							@item.CategoryName
@@ -50,11 +52,12 @@
 						<td>
 							@item.Price.ToString("$#.00")
 						</td>
+						
 						<td>
 							<a asp-action="ProductEdit" asp-route-productId="@item.ProductId" class="btn btn-outline-success">
 								<i class="bi bi-pencil-square"></i>
 							</a>
-							<a asp-action="ProductDelete" asp-route-productId="@item.ProductId" class="btn btn-outline-danger">
+							<a asp-action="ProductDelete" asp-route-productId="@item.ProductId" class="btn btn-outline-danger delete-confirmation">
 								<i class="bi bi-trash"></i>
 							</a>
 						</td>
