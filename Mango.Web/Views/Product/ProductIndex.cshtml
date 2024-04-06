@@ -1,71 +1,68 @@
 ﻿@model IEnumerable<ProductDto>
 <div class="card shadow border-0 mt-4">
-	<div class="card-header bg-primary bg-gradient ml-0 py-3">
-		<div class="row">
-			<div class="col-12 text-center">
-				<h1 class="text-white">Products List</h1>
-			</div>
-		</div>
-	</div>
-	<div class="card-body p-4">
-		<div class="row pb-3">
-			<div class="col-6">
-			</div>
-			<div class="col-6 text-end">
-				<a asp-action="ProductCreate" class="btn btn-outline-primary"><i class="bi bi-plus-square"></i> Create New Product</a>
+    <div class="card-header bg-primary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white">Products List</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-12 text-end">
+                <a asp-action="ProductCreate" class="btn btn-outline-primary"><i class="bi bi-plus-square"></i> Create New Product</a>
+            </div>
+        </div>
+        <div class="d-none d-lg-block">
+            <div class="row fw-bold" ">
+                <div class="col-md-3">
+                    Image
+                </div>
+                <div class="col-md-2">
+                    Category
+                </div>
+                <div class="col-md-3">
+                    Name
+                </div>
+                <div class="col-md-2">
+                    Price
+                </div>
+                <div class="col-md-2" ">
+                    &nbsp;
+                </div>
+            </div>
+        </div>
+        <hr />
+    @foreach (var item in Model)
+    {
+            <div class="row mb-3 rounded border-2 border-primary">
+                <div class="col-md-3 col-12 mb-2">
+                    <div class="img-square-responsive">
+                        <img src="@item.ImageUrl" alt="thumbnail" class="img-fluid img-thumbnail" />
+                    </div>
+                </div>
+                <div class="col-md-2 col-12">
+                    <span class="badge bg-warning text-white p-2">@item.CategoryName</span>
+                </div>
+                <div class="col-md-3 col-12 mt-1">
+                    @item.Name
+                </div>
+                <div class="col-md-2 col-12 mt-1">
+                    @item.Price.ToString("$#.00")
+                </div>
+                <div class="col-md-2 col-12 mt-1">
+                    <a asp-action="ProductEdit" asp-route-productId="@item.ProductId" class="btn btn-outline-success">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a asp-action="ProductDelete" asp-route-productId="@item.ProductId" class="btn btn-outline-danger delete-confirmation">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+            <hr />
+    }
+    </div>
 
-			</div>
-		</div>
-		<table class="table">
-			<thead>
-				<tr>
-					<th style="width:15%">
-						Image
-					</th>
-					<th>
-						Category Name
-					</th>
-					<th>
-						Name
-					</th>
-					<th>
-						Price
-					</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var item in Model)
-				{
-					<tr>
-						<td>
-							<div class="img-square-responsive">
-								<img src="@item.ImageUrl" alt="thumbnail" class="img-thumbnail w-100" />
-							</div>
-						</td>
-						<td>
-							@item.CategoryName
-						</td>
-						<td>
-							@item.Name
-						</td>
-						<td>
-							@item.Price.ToString("$#.00")
-						</td>
-						
-						<td>
-							<a asp-action="ProductEdit" asp-route-productId="@item.ProductId" class="btn btn-outline-success">
-								<i class="bi bi-pencil-square"></i>
-							</a>
-							<a asp-action="ProductDelete" asp-route-productId="@item.ProductId" class="btn btn-outline-danger delete-confirmation">
-								<i class="bi bi-trash"></i>
-							</a>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
 
-	</div>
 
 </div>
