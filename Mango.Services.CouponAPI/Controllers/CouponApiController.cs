@@ -22,9 +22,9 @@ namespace Mango.Services.CouponAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Get()
+        public ResponseDto GetAll()
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Mango.Services.CouponAPI.Controllers
             return _response;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [Authorize(Roles = "ADMIN")]
         public ResponseDto Delete(string id)
         {
