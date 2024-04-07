@@ -58,7 +58,7 @@
                                 <a class="nav-link text-dark" href="#">Welcome, @User.Identity.Name</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Cart" asp-action="CartIndex">Cart <span class="badge rounded-pill badge-notification bg-danger">@TempData["cartItemCount"]</span></a>
+                                <a class="nav-link text-dark" asp-controller="Cart" asp-action="CartIndex">Cart <span class="badge rounded-pill badge-notification bg-danger">@Context.Items["cartItemCount"]</span></a>
                             </li>
                             if (!User.IsInRole(StaticData.Roles.ADMIN.ToString()))
                             {

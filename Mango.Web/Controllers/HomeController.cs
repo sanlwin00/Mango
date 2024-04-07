@@ -30,24 +30,7 @@ public class HomeController : Controller
         ResponseDto? response = await _productService.GetAllProductAsync();
         if (response != null && response.IsSuccess)
         {
-            list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(response.Result));
-            if(User.Identity.IsAuthenticated)
-            {
-                var userId = User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault().Value;
-                if (userId != null)
-                {
-                    ResponseDto? responseDto = await _shoppingCart.GetCartByUserAsync(userId);
-                    if (responseDto != null && responseDto.IsSuccess)
-                    {
-                        CartDto cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(responseDto.Result)); 
-                        if (cartDto != null)
-                        {
-                            TempData["cartItemCount"] = cartDto.CartDetails.Count();
-                        }
-                    }
-                }
-            }
-            
+            list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(response.Result));            
         }
         else
         {

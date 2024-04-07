@@ -1,4 +1,5 @@
 using Mango.Web;
+using Mango.Web.Middleware;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -6,7 +7,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30); 
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+builder.Services.AddControllersWithViews(options =>
+{
+	options.Filters.Add<CartItemCountActionFilter>();
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
@@ -49,6 +59,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
