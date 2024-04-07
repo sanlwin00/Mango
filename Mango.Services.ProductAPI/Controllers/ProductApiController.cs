@@ -23,8 +23,8 @@ namespace Mango.Services.ProductAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public ResponseDto Get()
+        [HttpGet("all")]
+        public ResponseDto GetAll()
         {
             try
             {
@@ -157,7 +157,7 @@ namespace Mango.Services.ProductAPI.Controllers
             return _response;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [Authorize(Roles = "ADMIN")]
         public ResponseDto Delete(int id)
         {

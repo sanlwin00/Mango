@@ -10,6 +10,23 @@ namespace Mango.Web.Services
         {
             _baseService = baseService;
         }
+        public async Task<ResponseDto?> GetAllProductAsync()
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = StaticData.ApiType.GET,
+                Url = StaticData.ProductApiBaseUrl + "/api/product/all"
+            });
+        }
+
+        public async Task<ResponseDto?> GetProductbyIdAsync(int id)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = StaticData.ApiType.GET,
+                Url = StaticData.ProductApiBaseUrl + "/api/product/" + id
+            });
+        }
         public async Task<ResponseDto?> CreateProductAsync(ProductDto productDto)
         {
             return await _baseService.SendAsync(new RequestDto()
@@ -26,27 +43,9 @@ namespace Mango.Web.Services
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = StaticData.ApiType.DELETE,
-                Url = StaticData.ProductApiBaseUrl + "/api/product/" + id
+                Url = StaticData.ProductApiBaseUrl + "/api/product/delete/" + id
             });
-        }
-
-        public async Task<ResponseDto?> GetAllProductAsync()
-        {
-            return await _baseService.SendAsync(new RequestDto()
-            {
-                ApiType = StaticData.ApiType.GET,
-                Url = StaticData.ProductApiBaseUrl + "/api/product"
-            });
-        }
-
-        public async Task<ResponseDto?> GetProductbyIdAsync(int id)
-        {
-            return await _baseService.SendAsync(new RequestDto()
-            {
-                ApiType = StaticData.ApiType.GET,
-                Url = StaticData.ProductApiBaseUrl + "/api/product/" + id
-            });
-        }
+        }        
 
         public async Task<ResponseDto?> UpdateProductAsync(ProductDto productDto)
         {
