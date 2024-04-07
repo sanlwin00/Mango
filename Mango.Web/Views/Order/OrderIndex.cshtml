@@ -82,7 +82,10 @@
 
 				if (statusParam === currentStatus) {
 					// Add the 'active-item' class to the <li> child
-					$(this).find('li').addClass('list-group-item-dark');
+					$(this).find('li').addClass('list-group-item-primary');
+				}
+				else {
+					$(this).find('li').addClass('list-group-item-secondary');
 				}
 			});
 		});

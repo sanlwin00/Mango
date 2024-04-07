@@ -24,12 +24,12 @@
                         <div class="col-md-5">
                             Product Details
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 text-center">
+                            Qty
+                        </div>
+                        <div class="col-md-2 text-md-end">
                             Price
-                        </div>
-                        <div class="col-md-2">
-                            Count
-                        </div>
+                        </div>                        
                         <div class="col-md-1">
                         </div>
                     </div>
@@ -38,31 +38,31 @@
                 
                     @foreach(var item in Model.CartDetails)
                     {
-                        <div class="row h-100">
-                            <div class="col-4 col-md-2 text-center py-2">
+                        <div class="row mb-3 rounded border-2 border-primary">
+                            <div class="col-md-2 col-12 mb-2">
                                 <div class="img-square-responsive">
-                                <img src="@item.Product.ImageUrl?.ToString()" class="rounded" width="100%" />
+                                    <img src="@item.Product.ImageUrl" alt="thumbnail" class="img-fluid img-thumbnail" />
                                 </div>
                             </div>
-                            <div class="col-8 col-md-5">
-                                <div><small>@item.Product.CategoryName</small></div>
-                                <h6>@item.Product.Name</h6>                                
+                            <div class="col-6 col-md-5">
+                                <h6>@item.Product.Name</h6>
                             </div>
-                            <div class="col-3 col-md-2 pt-md-4">
-                                <span>@item.Product.Price </span>
+                            <div class="col-6 col-md-2 text-end">
+                                x<span>@item.Qty</span><small class="text-muted">@string.Format($" ({item.Product.Price.ToString("C")} each)")</small> 
                             </div>
-                            <div class="col-3 col-md-2 pt-md-4">
-                                <span>@item.Qty</span>
+                            <div class="col-6 col-md-2 text-success text-md-end">
+                                <span>@((item.Product.Price * item.Qty).ToString("C"))</span>
                             </div>
-                            <div class="col-2 col-md-1 p-0 pt-md-4 text-center">
+
+                            <div class="col-6 col-md-1 pe-3 text-end">
                                 <a asp-action="RemoveCart" asp-route-cartDetailId="@item.CartDetailId" class="btn btn-sm btn-danger">
                                     <i class="bi bi-trash-fill"></i>
                                 </a>
                             </div>
                         </div>
+                        <hr />
                     }
 
-                    <hr />
                     <div class="row">
                         <div class="col-6">
                             @if (string.IsNullOrEmpty(Model.CartHeader.CouponCode))
@@ -87,11 +87,11 @@
                                 Total:
                                 <del>@totalBeforeDiscount.ToString("C")</del><br />
                             </span>
-                            <span class="text-success">
-                                Order Discount: @Model.CartHeader.Discount.ToString("C")<br />
+                            <span class="text-danger">
+                                Coupon Discount: @Model.CartHeader.Discount.ToString("C")<br />
                             </span>                            
                         }
-                        <span class="text-danger h5">  Order Total : @Model.CartHeader.CartTotal.ToString("C") <br /></span>
+                        <span class="text-success h5">  Order Total : @Model.CartHeader.CartTotal.ToString("C") <br /></span>
                         
                     </div>
                 </div>            
