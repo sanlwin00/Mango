@@ -231,7 +231,7 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
             return _response;
         }
 
-         [HttpPost("EmailCart")]
+        [HttpPost("EmailCart")]
         public async Task<ResponseDto> EmailCart([FromBody] CartDto cartDto)
         {
             try

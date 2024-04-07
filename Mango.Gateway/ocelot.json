@@ -124,11 +124,70 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
+    },
+    //*********** ShoppingCart API ***********//
+    {
+      "DownstreamPathTemplate": "/api/cart/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/{userId}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/cart/UpsertCart",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/UpsertCart",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/cart/RemoveCart",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/RemoveCart",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/cart/SetCoupon",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/SetCoupon",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/cart/EmailCart",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/EmailCart",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ]
 }
-/*"CouponAPI": "https://localhost:7001",
-    "ProductAPI": "https://localhost:7000",
-    "ShoppingCartAPI": "https://localhost:7003",
+/*
     "OrderAPI": "https://localhost:7004"
 */
