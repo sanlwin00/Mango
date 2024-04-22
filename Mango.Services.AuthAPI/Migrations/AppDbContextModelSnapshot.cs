@@ -116,6 +116,20 @@ namespace Mango.Services.AuthAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "0b53ae26-7fd8-461a-b008-128c06b3c994",
+                            Name = "ADMIN",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "1ac6ed97-11f5-4139-b0aa-742e6ad2cdec",
+                            Name = "CUSTOMER",
+                            NormalizedName = "CUSTOMER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

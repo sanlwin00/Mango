@@ -14,6 +14,18 @@ namespace Mango.Services.CouponAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(), 
+                Name = "ADMIN",
+                NormalizedName = "ADMIN"
+            });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "CUSTOMER",
+                NormalizedName = "CUSTOMER"
+            });
         }
     }
 }
