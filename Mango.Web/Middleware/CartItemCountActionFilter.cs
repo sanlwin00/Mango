@@ -40,8 +40,13 @@ namespace Mango.Web.Middleware
 							{
 								itemCount = cartDto.CartDetails.Count();
 							}
+                           
 						}
-						context.HttpContext.Session.SetInt32(cacheKey, itemCount.Value);
+                        if (!itemCount.HasValue)
+                        {
+                            itemCount = 0;
+                        }
+                        context.HttpContext.Session.SetInt32(cacheKey, itemCount.Value);
 					}
 
 					context.HttpContext.Items["cartItemCount"] = itemCount.Value;
