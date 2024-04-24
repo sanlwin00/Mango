@@ -43,7 +43,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.AddJwtAuthenticationAndSwagger(); //custom extension
 builder.Services.AddAuthorization();
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +51,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Order API");
+        options.RoutePrefix = string.Empty;
+    });
+}
+
 // This is for Stripe API
 Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 

@@ -16,7 +16,7 @@ namespace Mango.Services.ProductAPI.Data
             modelBuilder.Entity<Product>().HasData(new Product
             {
                 ProductId = 1,
-                Name = "Shrim Cocktail",
+                Name = "Shrimp Cocktail",
                 Price = 12.90,
                 CategoryName = "Appetizers",
                 Description = "Ditch the cocktail sauce and serve this classic appetizer with a spicy twist",
