@@ -7,15 +7,20 @@ using Mango.Services.OrderAPI.Services;
 using Mango.Services.OrderAPI.Services.IServices;
 using Mango.Services.OrderAPI.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //* Add DBContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            .ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug)))
+            .ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuted, LogLevel.Debug)))
+            .EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
 });
-
+ 
 //* Add Automapper
 IMapper mapper = MappingConfig.RegisterMappings().CreateMapper();
 builder.Services.AddSingleton(mapper);
@@ -43,6 +48,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.AddJwtAuthenticationAndSwagger(); //custom extension
 builder.Services.AddAuthorization();
 
+//* Add Logging
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,6 +73,8 @@ else
 
 // This is for Stripe API
 Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+app.UseSerilogRequestLogging(); //* log every request
 
 app.UseHttpsRedirection();
 app.UseAuthentication();    //* use jwt auth

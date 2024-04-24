@@ -95,7 +95,7 @@ public class BaseService : IBaseService
                 case HttpStatusCode.BadRequest:
                     var content = await response.Content.ReadAsStringAsync();
                     dynamic obj = JsonConvert.DeserializeObject(content);
-                    return new() { IsSuccess = false, Message = response.ReasonPhrase + " | " + obj.title };
+                    return new() { IsSuccess = false, Message = response.ReasonPhrase + " | " + obj.title +" | " + obj.message };
                 default:  
                     return new() { IsSuccess = false, Message = response.ReasonPhrase };
                 

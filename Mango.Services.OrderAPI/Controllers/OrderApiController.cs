@@ -13,6 +13,7 @@ using Stripe.Checkout;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Mango.MessageBus;
+using Serilog;
 
 namespace Mango.Services.OrderAPI.Controllers
 {
@@ -45,6 +46,8 @@ namespace Mango.Services.OrderAPI.Controllers
         {
             try
             {
+                Log.Information("Creating order for user {UserId}", cartDto.CartHeader.UserId);
+                Log.Debug("{@CartDto}", cartDto);
                 OrderHeaderDto header = _mapper.Map<OrderHeaderDto>(cartDto.CartHeader);
                 header.OrderDate = DateTime.Now;
                 header.Status = StaticData.OrderStatus.Pending.ToString();
@@ -52,7 +55,8 @@ namespace Mango.Services.OrderAPI.Controllers
 
                 OrderHeader orderCreated = _db.OrderHeaders.Add(_mapper.Map<OrderHeader>(header)).Entity;
                 await _db.SaveChangesAsync();
-
+                Log.Information("Order created. Id:{OrderId}", orderCreated.OrderHeaderId);
+                Log.Debug("{@OrderHeader}", orderCreated);
                 header.OrderHeaderId = orderCreated.OrderHeaderId;
                 _response.Result = header;
             }
@@ -60,6 +64,7 @@ namespace Mango.Services.OrderAPI.Controllers
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}", ex);
             }
             return _response;
         }
@@ -69,6 +74,7 @@ namespace Mango.Services.OrderAPI.Controllers
         {
             try
             {
+                Log.Information("Updating order {Id} with status {NewStatus}", orderId, newStatus);
                 OrderHeader orderHeader = _db.OrderHeaders.Single(x => x.OrderHeaderId == orderId);
                 if (newStatus == StaticData.OrderStatus.Cancelled.ToString() && orderHeader.PaymentIntentId != null)
                 {
@@ -77,37 +83,40 @@ namespace Mango.Services.OrderAPI.Controllers
                         Reason = RefundReasons.RequestedByCustomer,
                         PaymentIntent = orderHeader.PaymentIntentId,                        
                     };
-
+                    Log.Information("Cancellation requested. Creating a refund in Stripe...");
                     var refundService = new RefundService();
                     Refund refund = refundService.Create(options);
                 }
                 orderHeader.Status = newStatus;
                 _db.OrderHeaders.Update(orderHeader);
                 await _db.SaveChangesAsync();
-
+                Log.Information("Order status updated.");
                 _response.Result = orderHeader;
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}", ex);
             }
             return _response;
         }
 
         [Authorize]
         [HttpPost("GetOrders")]
-        public async Task<ResponseDto> GetOrder([FromBody]string? userId = "")
+        public async Task<ResponseDto> GetOrders([FromBody]string? userId = "")
         {
             try
             {
                 IEnumerable<OrderHeader> orders;
                 if(User.IsInRole(StaticData.Roles.ADMIN.ToString()))
                 {
+                    Log.Information("Retrieving orders for ADMIN");
                     orders = _db.OrderHeaders.Include(x => x.OrderDetails).OrderByDescending(y => y.OrderHeaderId).ToList();
                 }
                 else
                 {
+                    Log.Information("Retrieving orders for {userid}", userId);
                     orders = _db.OrderHeaders.Include(x => x.OrderDetails).Where(u => u.UserId == userId).OrderByDescending(y => y.OrderHeaderId).ToList();
                 }
                 _response.Result = _mapper.Map<IEnumerable<OrderHeaderDto>>(orders);
@@ -116,6 +125,7 @@ namespace Mango.Services.OrderAPI.Controllers
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}", ex);
             }
             return _response;
         }
@@ -126,6 +136,7 @@ namespace Mango.Services.OrderAPI.Controllers
         {
             try
             {
+                Log.Information("Retrieving order {Id}", id);
                 OrderHeader orderHeader = _db.OrderHeaders.Include(x => x.OrderDetails).First(y => y.OrderHeaderId == id);
                 _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
             }
@@ -133,6 +144,7 @@ namespace Mango.Services.OrderAPI.Controllers
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}", ex);
             }
             return _response;
         }
@@ -154,6 +166,7 @@ namespace Mango.Services.OrderAPI.Controllers
 
                 if (!stripeRequestDto.OrderHeader.CouponCode.IsNullOrEmpty())
                 {
+                    Log.Information("Retrieving coupon - {CouponCode}", stripeRequestDto.OrderHeader.CouponCode);
                     //get stripe coupon id and apply
                     var response = await _couponService.GetCouponAsync(stripeRequestDto.OrderHeader.CouponCode);
                     if (response != null && response.IsSuccess)
@@ -167,6 +180,10 @@ namespace Mango.Services.OrderAPI.Controllers
                             }
                         };
                         options.Discounts = discountObj;
+                    }
+                    else
+                    {
+                        Log.Warning("Failed to retrieve the coupon. {@Response}", response);
                     }
                 }
 
@@ -187,14 +204,18 @@ namespace Mango.Services.OrderAPI.Controllers
                     };
                     options.LineItems.Add(stripeLineItem);
                 }
+                Log.Information("Creating stripe session...");
+                Log.Debug("Stripe options: {@Options}", options);
                 var service = new SessionService();
                 Session session = service.Create(options);
+                Log.Information("Stripe session created. SessionID: {Id}", session.Id);
 
                 stripeRequestDto.SessionUrl = session.Url;
 
                 OrderHeader orderHeader = _db.OrderHeaders.First(x => x.OrderHeaderId == stripeRequestDto.OrderHeader.OrderHeaderId);
                 orderHeader.StripeSessionId = session.Id;
                 await _db.SaveChangesAsync();
+                Log.Information("Order {Id} updated.", orderHeader.OrderHeaderId);
 
                 _response.Result = stripeRequestDto;
 
@@ -203,6 +224,7 @@ namespace Mango.Services.OrderAPI.Controllers
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}" , ex);
             }
             return _response;
         }
@@ -213,9 +235,10 @@ namespace Mango.Services.OrderAPI.Controllers
         {
             try
             {
+                Log.Information("Retrieving order {id} ...", orderHeaderId);
                 OrderHeader orderHeader = _db.OrderHeaders.First(x => x.OrderHeaderId == orderHeaderId);
 
-                //get paymentInten from Stripe
+                Log.Information("Retrieving paymentIntent from Stripe. SessionId: {SessionId}", orderHeader.StripeSessionId);
                 var service = new SessionService();
                 Session session = service.Get(orderHeader.StripeSessionId);
 
@@ -224,13 +247,13 @@ namespace Mango.Services.OrderAPI.Controllers
 
                 if (paymentIntent != null && paymentIntent.Status == "succeeded")
                 {
-                    //payment successful
+                    Log.Information("Payment successful. Updating order status and paymentIntent : {PaymentIntentId} ...", paymentIntent.Id);
                     orderHeader.Status = StaticData.OrderStatus.Approved.ToString();
                     orderHeader.PaymentIntentId = paymentIntent.Id;
                     _db.Update(orderHeader);
                     await _db.SaveChangesAsync();
 
-                    //log reward points in servicebus
+                    Log.Information("Registering reward points ({RewardPoint}) in messaging queue...", Convert.ToInt32(orderHeader.OrderTotal));
                     RewardDto rewardDto = new()
                     {
                         OrderId = orderHeaderId,
@@ -246,6 +269,7 @@ namespace Mango.Services.OrderAPI.Controllers
                 }
                 else
                 {
+                    Log.Warning("Payment unsuccessful. {@PaymentIntent}", paymentIntent);
                     _response.IsSuccess = false;
                     _response.Message = paymentIntent.Status;
                 }
@@ -254,6 +278,7 @@ namespace Mango.Services.OrderAPI.Controllers
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                Log.Error("Exception occured: {@ex}", ex);
             }
             return _response;
         }
