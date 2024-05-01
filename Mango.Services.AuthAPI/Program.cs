@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

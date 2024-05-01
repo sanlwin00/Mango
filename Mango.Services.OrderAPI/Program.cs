@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
 //* Add DBContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

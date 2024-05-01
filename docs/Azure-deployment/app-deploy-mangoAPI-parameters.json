@@ -9,13 +9,13 @@
             "value": "mango-rgp"
         },
         "name": {
-            "value": "MangoMicro"
+            "value": "MangoApiGateway"
         },
         "location": {
             "value": "East US"
         },
         "hostingPlanName": {
-            "value": "MangoWebFrontEndPlan"
+            "value": "MangoApiGatewayPlan"
         },
         "serverFarmResourceGroup": {
             "value": "mango-rgp"

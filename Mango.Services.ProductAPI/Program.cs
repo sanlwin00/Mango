@@ -5,7 +5,7 @@ using Mango.Services.ProductAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
 //* Add DBContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
