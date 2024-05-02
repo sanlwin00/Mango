@@ -41,7 +41,6 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
-	//----------------------------------//
     //*********** Coupon API ***********//
     {
       "DownstreamPathTemplate": "/api/coupon/all",
@@ -88,7 +87,6 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
-	//----------------------------------//
     //*********** ShoppingCart API ***********//
     {
       "DownstreamPathTemplate": "/api/cart/{userId}",
@@ -129,7 +127,6 @@
       "UpstreamPathTemplate": "/api/cart/EmailCart",
       "UpstreamHttpMethod": [ "POST" ]
     },
-	//----------------------------------//
     //*********** Order API ***********//
     {
       "DownstreamPathTemplate": "/api/order/UpdateOrderStatus/{orderId}",

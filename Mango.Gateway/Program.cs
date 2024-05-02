@@ -11,13 +11,13 @@ builder.Services.AddSwaggerGen();
 //* Add Ocelot for gateway
 if (builder.Environment.IsProduction())
 {
-    builder.Configuration.AddJsonFile("ocelot.Production.json", optional: false, reloadOnChange: true);
     Log.Information("Loaded ocelot.Production.json");
+    builder.Configuration.AddJsonFile("ocelot.Production.json", optional: false, reloadOnChange: true);
 }
 else
 {
-    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
     Log.Information("Loaded ocelot.json");
+    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);    
 }
 builder.Services.AddOcelot();               
 
