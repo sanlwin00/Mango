@@ -237,7 +237,7 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
             try
             {
                 string queueName = _configuration.GetValue<string>("MessageQueueNames:OrderEmailQueue");
-                await _messageBus.PublishMessage(cartDto, queueName);
+                await _messageBus.PublishMessageAsync(cartDto, queueName);
             }
             catch (Exception ex)
             {

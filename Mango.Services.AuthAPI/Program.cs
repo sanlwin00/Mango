@@ -18,7 +18,7 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders(); ;
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IMessageBus, MessageBus>();
+builder.Services.AddSingleton<IMessageBus>(new AzureMessageBus(builder.Configuration["Azure:ServiceBusConnectionString"]));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 

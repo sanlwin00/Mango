@@ -39,7 +39,7 @@ namespace Mango.Services.AuthAPI.Controllers
                 _response.Result = await _authService.GetUser(dto.Email);
 
                 string queueName = _configuration.GetValue<string>("MessageQueueNames:RegisterEmailQueue");
-                _messageBus.PublishMessage(dto, queueName);
+                _messageBus.PublishMessageAsync(dto, queueName);
 
                 return Ok(_response);
             }

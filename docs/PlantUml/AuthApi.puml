@@ -1,0 +1,83 @@
+@startuml
+title AuthAPI Class Diagram
+page 1x2
+package "Mango.Services.AuthAPI" <<Folder>> {
+    package "Mango.Services.AuthAPI.Controllers" <<Folder>> {
+        class AuthApiController {
+            - IAuthService _authService
+            + Task<IActionResult> Login(LoginDto loginDto)
+        }
+    }
+    package "Mango.Services.AuthAPI.Services" <<Folder>> {
+        class JwtTokenGenerator implements IJwtTokenGenerator {
+            + string GenerateToken(ApplicationUser applicationUser, IEnumerable<string> roles)
+        }
+        class AuthService implements IAuthService {
+            - AuthDbContext _context
+            + Task<string> Register(RegistrationDto registrationDto)
+            + Task<LoginResponseDto?> Login(LoginRequestDto loginRequestDto)
+            + Task<UserDto?> GetUser(string userName)
+            + Task<bool> AssignRole(string email, string roleName)
+        }
+        interface IAuthService {
+            + Register(registrationDto: RegistrationDto): Task<string>
+            + Login(loginRequestDto: LoginRequestDto): Task<LoginResponseDto?>
+            + GetUser(userName: string): Task<UserDto?>
+            + AssignRole(email: string, roleName: string): Task<bool>
+        }
+        interface IJwtTokenGenerator {
+            + GenerateToken(applicationUser: ApplicationUser, roles: IEnumerable<string>): string
+        }
+    }
+    package "Mango.Services.AuthAPI.Data" <<Folder>> {
+        class AuthDbContext {
+            - DbSet<ApplicationUser> Users
+            - DbSet<Role> Roles
+            + SaveChangesAsync()
+        }
+    }
+    package "Mango.Services.AuthAPI.Models" <<Folder>> {
+        class ApplicationUser {
+            - string Id
+            - string UserName
+            - string PasswordHash
+            + bool CheckPassword(string password)
+        }
+        class JwtOptions {
+            + string Issuer
+            + string Audience
+            + TimeSpan ValidFor
+        }
+        class Dto.LoginRequestDto {
+            + string UserName
+            + string Password
+        }
+        class Dto.LoginResponseDto {
+            + UserDto User
+            + string Token
+        }
+        class Dto.RegistrationDto {
+            + string Email
+            + string Name
+            + string PhoneNumber
+            + string Password
+            + string Role
+        }
+        class Dto.ResponseDto {
+            + object Result
+            + bool IsSuccess
+            + string Message
+        }
+        class Dto.UserDto {
+            + string Id
+            + string Email
+            + string Name
+            + string PhoneNumber
+        }
+    }
+    AuthService -down-> AuthDbContext
+    AuthApiController -> IAuthService
+    
+}
+
+@enduml

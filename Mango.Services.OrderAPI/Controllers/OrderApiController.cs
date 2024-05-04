@@ -263,7 +263,7 @@ namespace Mango.Services.OrderAPI.Controllers
                     };
 
                     string topicName = _configuration.GetValue<string>("MessageQueueNames:OrderCreatedTopic");
-                    await _messageBus.PublishMessage(rewardDto, topicName);
+                    await _messageBus.PublishMessageAsync(rewardDto, topicName);
 
                     _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
                 }
