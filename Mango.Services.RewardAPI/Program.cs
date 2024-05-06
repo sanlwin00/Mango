@@ -3,6 +3,7 @@ using Mango.Services.RewardAPI.Data;
 using Mango.Services.RewardAPI.Services;
 using Mango.Services.RewardAPI.Messaging;
 using Mango.Services.RewardAPI.Extension;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
@@ -26,6 +27,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//* Configure SeriLog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +49,8 @@ else
         options.RoutePrefix = string.Empty;
     });
 }
+
+app.UseSerilogRequestLogging(); //* log every request
 
 app.UseHttpsRedirection();
 

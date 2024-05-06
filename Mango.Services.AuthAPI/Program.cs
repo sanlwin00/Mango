@@ -6,6 +6,7 @@ using Mango.Services.AuthAPI.Services.IService;
 using Mango.Services.CouponAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
@@ -26,6 +27,11 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//* Configure SeriLog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +50,7 @@ else
     });
 }
 
-
+app.UseSerilogRequestLogging(); //* log every request
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

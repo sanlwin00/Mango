@@ -18,6 +18,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mango.Services.AuthAPI", "Mango.Services.AuthAPI\Mango.Services.AuthAPI.csproj", "{C82E8B93-40AE-47EC-A219-F01879BB2B35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{861674DA-53B6-449D-933D-FC9A7ADFBD3A}"
+	ProjectSection(SolutionItems) = preProject
+		docs\PlantUml\AuthApi.mdpuml = docs\PlantUml\AuthApi.mdpuml
+		docs\PlantUml\FolderStructure.mdpuml = docs\PlantUml\FolderStructure.mdpuml
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mango.Services.ProductAPI", "Mango.Services.ProductAPI\Mango.Services.ProductAPI.csproj", "{B41797E7-DD05-4AC9-9D65-5F2040EEB5EB}"
 EndProject
@@ -31,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mango.Services.OrderAPI", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mango.Services.RewardAPI", "Mango.Services.RewardAPI\Mango.Services.RewardAPI.csproj", "{DA473454-BD9C-44E8-855B-FC3F92A4F836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mango.Gateway", "Mango.Gateway\Mango.Gateway.csproj", "{C3D3BD18-672A-4731-9072-27CBAFF93E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mango.Gateway", "Mango.Gateway\Mango.Gateway.csproj", "{C3D3BD18-672A-4731-9072-27CBAFF93E55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

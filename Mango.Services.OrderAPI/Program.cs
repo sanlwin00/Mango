@@ -16,7 +16,7 @@ builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-            .ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug)))
+            .ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug)))    //* suppress EF SQL commands in the log
             .ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuted, LogLevel.Debug)))
             .EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
 });
@@ -48,7 +48,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.AddJwtAuthenticationAndSwagger(); //custom extension
 builder.Services.AddAuthorization();
 
-//* Add Logging
+//* Configure SeriLog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 builder.Host.UseSerilog();

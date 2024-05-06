@@ -2,6 +2,7 @@
 using Mango.Services.RewardAPI.Models;
 using Mango.Services.RewardAPI.Services;
 using Newtonsoft.Json;
+using Serilog;
 using System.Diagnostics;
 using System.Text;
 
@@ -20,7 +21,7 @@ namespace Mango.Services.RewardAPI.Messaging
             _rewardService = rewardService;
             _configuration = configuration;
             
-            _svcBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+            _svcBusConnectionString = _configuration.GetValue<string>("Azure:ServiceBusConnectionString");
             string orderCreatedTopicName = _configuration.GetValue<string>("MessageQueueNames:OrderCreatedTopic");
             string orderCreatedSubscription = _configuration.GetValue<string>("MessageQueueNames:OrderCreatedSubscription");
 
@@ -55,7 +56,7 @@ namespace Mango.Services.RewardAPI.Messaging
 
         private Task OnEmailCartMessageErrorOccured(ProcessErrorEventArgs arg)
         {
-            Debug.WriteLine(arg.Exception.Message);
+            Log.Error("Exception occured: {@ex}", arg.Exception);
             return Task.CompletedTask;
         }
 

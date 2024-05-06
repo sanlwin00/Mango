@@ -7,6 +7,7 @@ using Mango.Services.ShoppingCartAPI.Services;
 using Mango.Services.ShoppingCartAPI.Services.IServices;
 using Mango.Services.ShoppingCartAPI.Utility;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry();  //* Azure App Insights
@@ -43,6 +44,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.AddJwtAuthenticationAndSwagger(); //custom extension
 builder.Services.AddAuthorization();
 
+//* Configure SeriLog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -60,7 +66,7 @@ else
         options.RoutePrefix = string.Empty;
     });
 }
-
+app.UseSerilogRequestLogging(); //* log every request
 app.UseHttpsRedirection();
 app.UseAuthentication();    //* use jwt auth
 app.UseAuthorization();

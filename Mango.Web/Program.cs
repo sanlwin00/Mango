@@ -3,6 +3,7 @@ using Mango.Web.Middleware;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +45,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.LoginPath = "/auth/login";
         option.AccessDeniedPath = "/auth/accessdenied";
     });
+
+//* Configure SeriLog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
+app.UseMiddleware<RequestLogContextEnricher>();
+app.UseSerilogRequestLogging(); //* log every request
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

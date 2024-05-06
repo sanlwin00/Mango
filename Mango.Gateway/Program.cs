@@ -11,12 +11,12 @@ builder.Services.AddSwaggerGen();
 //* Add Ocelot for gateway
 if (builder.Environment.IsProduction())
 {
-    Log.Information("Loaded ocelot.Production.json");
+    Log.Information("## Loaded ocelot.Production.json");
     builder.Configuration.AddJsonFile("ocelot.Production.json", optional: false, reloadOnChange: true);
 }
 else
 {
-    Log.Information("Loaded ocelot.json");
+    Log.Information("## Loaded ocelot.json");
     builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);    
 }
 builder.Services.AddOcelot();               
@@ -24,12 +24,15 @@ builder.Services.AddOcelot();
 //* Add Authentication, Authorization and Swagger
 builder.AddJwtAuthenticationAndSwagger();   //*custom extension
 builder.Services.AddAuthorization();
-//* Add Logging
+
+//* Configure SeriLog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 builder.Host.UseSerilog();
+
 var app = builder.Build();
 app.UseSerilogRequestLogging(); //* log every request
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -45,6 +48,8 @@ else
         options.RoutePrefix = string.Empty;
     });
 }
+
+app.UseSerilogRequestLogging(); //* log every request
 
 app.UseHttpsRedirection();
 
