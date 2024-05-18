@@ -18,7 +18,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var dbOptionBuilder = new DbContextOptionsBuilder<AppDbContext>();
 dbOptionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
-builder.Services.AddSingleton(new EmailService(dbOptionBuilder.Options));
+// Add HttpClient for network requests
+builder.Services.AddHttpClient();
+
+// Register the email dispatcher and email service with dependency injection
+var functionUrl = builder.Configuration["Azure:EmailFunctionUrl"];
+builder.Services.AddSingleton<IEmailDispatcher>(new AzureEmailDispatcher(
+    builder.Services.BuildServiceProvider().GetRequiredService<HttpClient>(),
+    functionUrl
+));
+
+builder.Services.AddSingleton(new EmailService(dbOptionBuilder.Options, builder.Services.BuildServiceProvider().GetRequiredService<IEmailDispatcher>()));
 builder.Services.AddSingleton<IServiceBusCosumer, AzureServiceBusConsumer>();
 
 builder.Services.AddControllers();

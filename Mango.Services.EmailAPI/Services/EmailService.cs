@@ -10,10 +10,12 @@ namespace Mango.Services.EmailAPI.Services
     public class EmailService : IEmailService
     {
         private DbContextOptions<AppDbContext> _dbOptions;
+        private readonly IEmailDispatcher _emailDispatcher;
 
-        public EmailService(DbContextOptions<AppDbContext> options)
+        public EmailService(DbContextOptions<AppDbContext> options, IEmailDispatcher emailDispatcher)
         {
             this._dbOptions = options;
+            this._emailDispatcher = emailDispatcher;
         }
 
         public async Task<bool> SendCartEmail(CartDto cartDto)
@@ -32,7 +34,8 @@ namespace Mango.Services.EmailAPI.Services
                 _db.Emails.Add(emailLog);
                 await _db.SaveChangesAsync();
 
-                return true;
+                var subject = "Your Cart";
+                return await _emailDispatcher.SendEmailAsync(emailLog.EmailAddress, subject, emailLog.Message);
             }
             catch (Exception ex)
             {
@@ -57,7 +60,8 @@ namespace Mango.Services.EmailAPI.Services
                 _db.Emails.Add(emailLog);
                 await _db.SaveChangesAsync();
 
-                return true;
+                var subject = "Order placed successfully!";
+                return await _emailDispatcher.SendEmailAsync(emailLog.EmailAddress, subject, emailLog.Message);
             }
             catch (Exception ex)
             {
@@ -82,7 +86,8 @@ namespace Mango.Services.EmailAPI.Services
                 _db.Emails.Add(emailLog);
                 await _db.SaveChangesAsync();
 
-                return true;
+                var subject = "Registration successful!";
+                return await _emailDispatcher.SendEmailAsync(emailLog.EmailAddress, subject, emailLog.Message);
             }
             catch (Exception ex)
             {
