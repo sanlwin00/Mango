@@ -400,3 +400,10 @@ FodyWeavers.xsd
 # Ignore all appsettings.json files and their variants
 appsettings*.json
 
+/Mango.Services.CouponAPI/appsettings.Production.json.bak
+/Mango.Services.EmailAPI/appsettings.Production.json.bak
+/Mango.Services.ProductAPI/appsettings.Production.json.bak
+/Mango.Services.RewardAPI/appsettings.json
+/Mango.Services.RewardAPI/appsettings.Development.json
+/Mango.Services.RewardAPI/appsettings.Production.json
+/Mango.Services.ShoppingCartAPI/appsettings.Production.json.bak
