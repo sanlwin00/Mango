@@ -1,4 +1,0 @@
-New-AzResourceGroupDeployment -Name ExampleDeployment -ResourceGroupName ExampleResourceGroup -TemplateFile <path-to-template> -TemplateParameterFile c:\MyTemplates\storage.parameters.json
-
-
-New-AzResourceGroupDeployment -Name "MangoCouponApiDeployment" -ResourceGroupName "mango-rgp" -TemplateFile "app-deploy-mangoAPI-template" -TemplateParameterFile "app-deploy-mangoAPI-parameters.json"
